@@ -1,0 +1,54 @@
+.home-page {
+  font-size: 32px;
+  .head {
+    display: flex;
+    padding: 35px 31px;
+    color: #000;
+    margin-right: 10px;
+  }
+  .tab-list {
+    display: flex;
+    padding: 0 60px;
+    border-bottom: 20px solid #f9f9f9;
+  }
+  .tab-item {
+    position: relative;
+    display: flex;
+    flex: 1;
+    height: 118px;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+    &.choosed {
+      font-size: 48px;
+      font-weight: 700;
+      color: #000;
+      &::after {
+        content: '';
+        position: absolute;
+        width: 28px;
+        height: 8px;
+        border-radius: 4px;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: @themeColor;
+      }
+    }
+  }
+  .area-type {
+    display: flex;
+    align-items: center;
+    .van-icon {
+      margin: 0 10px 0 6px;
+    }
+  }
+  .area-con {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    top: 100%;
+    transform: translateY(-100%);
+    transition: transform 1s;
+  }
+}
