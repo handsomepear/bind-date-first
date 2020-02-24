@@ -5,8 +5,9 @@ import VueCompositionApi from '@vue/composition-api'
 
 import 'lib-flexible'
 
+import '@/assets/css/common.less'
 import 'vant/lib/index.css'
-import { Button, Form, Field, ActionSheet, Icon, Area } from 'vant'
+import { Button, Form, Field, ActionSheet, Icon, Area, List } from 'vant'
 
 Vue.use(VueCompositionApi)
 Vue.use(Button)
@@ -15,6 +16,7 @@ Vue.use(Button)
   .use(ActionSheet)
   .use(Icon)
   .use(Area)
+  .use(List)
 
 Vue.config.productionTip = false
 

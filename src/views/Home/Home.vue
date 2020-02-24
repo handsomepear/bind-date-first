@@ -9,6 +9,8 @@
         <div :class="['tab-item', tabIndex === 0 ? 'choosed' : '']" @click="onChooseTab(0)">女生</div>
         <div :class="['tab-item', tabIndex === 1 ? 'choosed' : '']" @click="onChooseTab(1)">男生</div>
       </section>
+      <!-- 列表 -->
+      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad"></van-list>
     </section>
     <van-action-sheet
       v-model="isShowType"
