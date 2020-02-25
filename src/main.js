@@ -7,7 +7,7 @@ import 'lib-flexible'
 
 import '@/assets/css/common.less'
 import 'vant/lib/index.css'
-import { Button, Form, Field, ActionSheet, Icon, Area, List } from 'vant'
+import { Button, Form, Field, ActionSheet, Icon, Area, List, Swipe, SwipeItem, Overlay } from 'vant'
 
 Vue.use(VueCompositionApi)
 Vue.use(Button)
@@ -17,6 +17,9 @@ Vue.use(Button)
   .use(Icon)
   .use(Area)
   .use(List)
+  .use(Swipe)
+  .use(SwipeItem)
+  .use(Overlay)
 
 Vue.config.productionTip = false
 
