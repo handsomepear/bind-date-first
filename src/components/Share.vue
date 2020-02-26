@@ -10,7 +10,9 @@
 
 <script>
 export default {
-  setup() {}
+  setup(props) {
+    console.log(props)
+  }
 }
 </script>
 
@@ -21,11 +23,14 @@ export default {
   height: 84px;
   justify-content: center;
   align-items: center;
-  background-color: #bbfffd;
+  background-color: #edffff;
   box-shadow: 0px 3px 6px 0px rgba(37, 211, 207, 0.2);
   border-radius: 12px;
   color: #333;
   font-size: 30px;
+  &.large {
+    width: 292px;
+  }
 }
 .share-img {
   display: flex;
@@ -33,7 +38,7 @@ export default {
   height: 42px;
   justify-content: center;
   align-items: center;
-  background-color: #25d3cf;
+  background-color: #25d4d0;
   border-radius: 10px;
   margin-right: 6px;
   img {

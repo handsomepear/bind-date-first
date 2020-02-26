@@ -27,10 +27,28 @@
         </div>
       </div>
     </section>
-
+    <section class="page-bottom can-edite" v-if="canEdite">
+      <!-- 可编辑 -->
+      <div class="option flex-between-center">
+        <div class="edite-btn flex-center">编辑</div>
+        <div class="delete-btn flex-center" @click="onDelete">删除</div>
+        <Share class="large" />
+      </div>
+    </section>
     <!-- 底部 -->
-    <section class="page-bottom">
-      <div class="contact-way flex-between-center">
+    <section class="page-bottom" v-else>
+      <!-- 不可编辑 -->
+      <div class="contact-way flex-between-center" v-if="!hasWx">
+        <div class="contact-button flex-center" v-clipboard:copy="parentWx" v-clipboard:success="parentCopySuccess">
+          <span>家长微信：</span>
+          <span>{{ parentWx }}</span>
+        </div>
+        <div class="contact-button flex-center" v-clipboard:copy="mineWx" v-clipboard:success="mineCopySuccess">
+          <span>本人微信：</span>
+          <span>{{ mineWx }}</span>
+        </div>
+      </div>
+      <div class="contact-way flex-between-center" v-else>
         <div class="contact-button flex-center" @click="onShowPayModal">家长联系方式</div>
         <div class="contact-button flex-center" @click="onShowPayModal">本人联系方式</div>
       </div>
@@ -43,7 +61,7 @@
         <Share />
       </div>
     </section>
-    <div class="complain-btn flex-column flex-center" @click="onGoHome">
+    <div v-if="isShowComplainBtn" class="complain-btn flex-column flex-center" @click="isShowComplainModal = true">
       <img src="../../assets/imgs/tousu.png" alt="" />
       <span>投诉</span>
     </div>
@@ -67,14 +85,21 @@
     </van-overlay>
     <!-- 投诉弹窗 -->
     <van-overlay :show="isShowComplainModal">
-      <div class="complain-wrap flex-start-center flex-column">
-        <div class="complain-modal">
+      <div class="complain-wrap flex-center" @click="isShowComplainModal = false">
+        <div class="complain-modal" @click.stop>
+          <div class="title">投诉</div>
           <div class="complain-form">
             <h2>投诉原因</h2>
             <!-- <van-field type="textarea" placeholder="请输入..." class="reason" /> -->
             <div class="text-con">
               <textarea placeholder="请输入..."></textarea>
             </div>
+            <h2>电话号码</h2>
+            <div class="tel-con">
+              <input type="text" />
+            </div>
+            <div class="tips">注：请保持电话畅通，工作人员会尽快联系您。</div>
+            <div class="submit-btn flex-center">提交</div>
           </div>
           <div class="close-btn" @click="isShowComplainModal = false">
             <van-icon name="cross" color="#C0C0C0" />
@@ -94,11 +119,17 @@ export default {
   },
   setup(props, context) {
     const router = context.root.$router
+    const Toast = context.root.$toast
+    const Dialog = context.root.$dialog
     const data = reactive({
       current: 0,
       isShowPayModal: false, // 是否展示支付弹窗
-      isShowComplainModal: true,
-      hasWx: false
+      isShowComplainModal: false, // 是否展示投诉弹窗
+      isShowComplainBtn: false, // 是否展示投诉按钮
+      hasWx: false,
+      parentWx: 'ZPS0326',
+      mineWx: 'ZPS0000',
+      canEdite: true
     })
     const onPhotoChange = index => {
       data.current = index
@@ -115,12 +146,36 @@ export default {
     const onPay = () => {
       // 支付
     }
+
+    const parentCopySuccess = () => {
+      // console.log('复制成国内:' + e.text)
+      Toast('家长微信复制成功')
+    }
+    const mineCopySuccess = () => {
+      Toast('本人微信复制成功')
+    }
+    // 删除帖子
+    const onDelete = () => {
+      Dialog.confirm({
+        message: '确定要删除该相亲帖吗？',
+        cancel: () => {}
+      })
+        .then(() => {
+          console.log('确认删除')
+        })
+        .catch(() => {
+          console.log('取消')
+        })
+    }
     return {
       ...toRefs(data),
       onPhotoChange,
       onGoHome,
       onShowPayModal,
-      onPay
+      onPay,
+      parentCopySuccess,
+      mineCopySuccess,
+      onDelete
     }
   }
 }
