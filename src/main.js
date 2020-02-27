@@ -8,7 +8,26 @@ import 'lib-flexible'
 
 import '@/assets/css/common.less'
 import 'vant/lib/index.css'
-import { Button, Form, Field, ActionSheet, Icon, Area, List, Swipe, SwipeItem, Overlay, Toast, Dialog } from 'vant'
+import {
+  Button,
+  Form,
+  Field,
+  ActionSheet,
+  Icon,
+  Area,
+  List,
+  Swipe,
+  SwipeItem,
+  Overlay,
+  Toast,
+  Dialog,
+  Cell,
+  CellGroup,
+  Uploader,
+  DatetimePicker,
+  Popup,
+  Picker
+} from 'vant'
 
 Vue.use(VueCompositionApi)
 Vue.use(Clipboard)
@@ -24,7 +43,12 @@ Vue.use(Button)
   .use(Overlay)
   .use(Toast)
   .use(Dialog)
-
+  .use(Cell)
+  .use(CellGroup)
+  .use(Uploader)
+  .use(DatetimePicker)
+  .use(Popup)
+  .use(Picker)
 Vue.config.productionTip = false
 
 new Vue({

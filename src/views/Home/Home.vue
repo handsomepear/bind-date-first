@@ -133,7 +133,7 @@
       cancel-text="取消"
       @cancel="isShowType = false"
     />
-    <section class="area-con" v-if="isShowAreaPanel">
+    <van-popup v-model="isShowAreaPanel" position="bottom">
       <van-area
         :area-list="areaList"
         :title="type + '选择'"
@@ -142,7 +142,7 @@
         @confirm="onChooseArea"
         @cancel="isShowAreaPanel = false"
       />
-    </section>
+    </van-popup>
   </div>
 </template>
 

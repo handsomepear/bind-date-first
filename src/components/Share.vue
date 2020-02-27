@@ -19,31 +19,31 @@ export default {
 <style lang="less" scoped>
 .share-button {
   display: flex;
-  width: 151px;
-  height: 84px;
+  width: 75.5px;
+  height: 42px;
   justify-content: center;
   align-items: center;
   background-color: #edffff;
-  box-shadow: 0px 3px 6px 0px rgba(37, 211, 207, 0.2);
-  border-radius: 12px;
+  box-shadow: 0px 1.5px 3px 0px rgba(37, 211, 207, 0.2);
+  border-radius: 6px;
   color: #333;
-  font-size: 30px;
+  font-size: 15px;
   &.large {
-    width: 292px;
+    width: 146px;
   }
 }
 .share-img {
   display: flex;
-  width: 42px;
-  height: 42px;
+  width: 21px;
+  height: 21px;
   justify-content: center;
   align-items: center;
   background-color: #25d4d0;
-  border-radius: 10px;
-  margin-right: 6px;
+  border-radius: 5px;
+  margin-right: 3px;
   img {
-    width: 28px;
-    height: 28px;
+    width: 14px;
+    height: 14px;
   }
 }
 </style>

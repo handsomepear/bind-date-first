@@ -30,7 +30,7 @@
     <section class="page-bottom can-edite" v-if="canEdite">
       <!-- 可编辑 -->
       <div class="option flex-between-center">
-        <div class="edite-btn flex-center">编辑</div>
+        <div class="edite-btn flex-center" @click="onEdite">编辑</div>
         <div class="delete-btn flex-center" @click="onDelete">删除</div>
         <Share class="large" />
       </div>
@@ -118,9 +118,11 @@ export default {
     Share
   },
   setup(props, context) {
-    const router = context.root.$router
+    const router = context.root.$router // 路由实例
+    const route = context.root.$route // 拿参数信息
     const Toast = context.root.$toast
     const Dialog = context.root.$dialog
+    console.log(route.query)
     const data = reactive({
       current: 0,
       isShowPayModal: false, // 是否展示支付弹窗
@@ -154,6 +156,17 @@ export default {
     const mineCopySuccess = () => {
       Toast('本人微信复制成功')
     }
+
+    // 编辑帖子
+    const onEdite = () => {
+      console.log(data)
+      const formData = JSON.stringify(data)
+      // if(formData.postId !== postId) {
+
+      // }
+      router.push({ name: 'Create', params: { formData } })
+    }
+
     // 删除帖子
     const onDelete = () => {
       Dialog.confirm({
@@ -175,7 +188,8 @@ export default {
       onPay,
       parentCopySuccess,
       mineCopySuccess,
-      onDelete
+      onDelete,
+      onEdite
     }
   }
 }
