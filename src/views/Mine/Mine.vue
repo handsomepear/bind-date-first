@@ -1,5 +1,9 @@
 <template>
   <div class="mine-page">
+    <section class="mine-info flex-start-center">
+      <div class="avatar"></div>
+      <div class="nickname">Zps</div>
+    </section>
     <section class="created">
       <h2>我创建的</h2>
       <div class="item-con " v-for="(item, index) in list" :key="item">

@@ -150,6 +150,7 @@
 import { onMounted, reactive, toRefs } from '@vue/composition-api'
 import areaList from '@/assets/data/area.js'
 import Share from '@/components/Share.vue'
+import fetch from '../../utils/_request'
 export default {
   components: {
     Share
@@ -179,6 +180,10 @@ export default {
           value: 1
         }
       ]
+    })
+
+    onMounted(() => {
+      fetch()
     })
 
     // 类型选择

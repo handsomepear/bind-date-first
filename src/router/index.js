@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import wxToolkit from '../utils/_wxToolkit'
 
 Vue.use(VueRouter)
 
@@ -28,6 +29,13 @@ const routes = [
 
 const router = new VueRouter({
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (wxToolkit.isWeChatUrl()) {
+    window.location.href = wxToolkit.getProjectUrl()
+  }
+  next()
 })
 
 export default router
