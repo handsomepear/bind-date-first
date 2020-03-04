@@ -1,58 +1,62 @@
 .detail-page {
+  padding-bottom: 100px;
   .photos {
     width: 100%;
-    height:258.5px;
+    height: 258.5px;
+    img {
+      height: 100%;
+    }
     .van-swipe-item {
-      background-color: @themeColor;
+      text-align: center;
     }
     .custom-indicator {
       position: absolute;
-      right:10px;
-      bottom:10px;
-      width:44px;
-      height:20px;
-      line-height:20px;
+      right: 10px;
+      bottom: 10px;
+      width: 44px;
+      height: 20px;
+      line-height: 20px;
       background: rgba(0, 0, 0, 0.5);
-      border-radius:10px;
-      font-size:12px;
+      border-radius: 10px;
+      font-size: 12px;
       text-align: center;
       color: #fff;
     }
   }
   // 帖子
   .person-item {
-    padding:15.5px;
+    padding: 15.5px;
     color: #707070;
-    font-size:14px;
-    line-height:27px;
+    font-size: 14px;
+    line-height: 27px;
     background-color: #fff;
     .title {
-      font-size:18px;
+      font-size: 18px;
       color: #222;
-      margin-right:8.5px;
+      margin-right: 8.5px;
       font-weight: 600;
     }
     .item-bottom {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top:16px;
+      margin-top: 16px;
     }
     .release-time {
-      font-size:12px;
+      font-size: 12px;
       color: #aaa;
     }
     .contact-way {
-      font-size:14px;
+      font-size: 14px;
       color: @themeColor;
     }
     .standard {
-      margin-top:3px;
+      margin-top: 3px;
     }
     .text {
-      font-size:15px;
+      font-size: 15px;
       .title {
-        font-size:15px;
+        font-size: 15px;
       }
     }
   }
@@ -61,78 +65,77 @@
     left: 0;
     bottom: 0;
     width: 100%;
-    padding:15px;
+    padding: 15px;
     box-sizing: border-box;
     &.can-edite {
-      height:70px;
-      background:rgba(255,255,255,0.9);
-      box-shadow:0px -3px9px0px rgba(0, 0, 0, 0.05);
+      height: 70px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0px -3px9px0px rgba(0, 0, 0, 0.05);
       .option {
         margin-top: 0;
       }
     }
   }
 
-
-
   .contact-button {
-    width:167.5px;
-    height:44px;
+    width: 167.5px;
+    height: 44px;
     background: @themeColor;
-    box-shadow:0px3px6.5px0px rgba(37, 211, 207, 0.4);
-    border-radius:8px;
+    box-shadow: 0px3px6.5px0px rgba(37, 211, 207, 0.4);
+    border-radius: 8px;
     color: #fff;
     flex-wrap: wrap;
   }
 
   .option {
-    margin-top:16px;
+    margin-top: 16px;
   }
 
   .public-code {
-    width:255px;
-    height:42px;
+    width: 255px;
+    height: 42px;
     background-color: #edffff;
-    box-shadow:0px1.5px3px0px rgba(37, 211, 207, 0.2);
-    border-radius:6px;
-    font-size:15px;
+    box-shadow: 0px1.5px3px0px rgba(37, 211, 207, 0.2);
+    border-radius: 6px;
+    font-size: 15px;
     color: #333;
 
     img {
-      width:22px;
-      height:22px;
-      margin-right:5px;
+      width: 22px;
+      height: 22px;
+      margin-right: 5px;
     }
   }
-  .edite-btn, .delete-btn {
-    width:90px;
-    height:44px;
+  .edite-btn,
+  .delete-btn {
+    width: 90px;
+    height: 44px;
     color: #fff;
     background-color: @themeColor;
-    box-shadow:0px3px6.5px0px rgba(37,211,207,0.4);
-    border-radius:8px;
+    box-shadow: 0px3px6.5px0px rgba(37, 211, 207, 0.4);
+    border-radius: 8px;
   }
   .home-btn,
   .complain-btn {
     position: fixed;
-    width:40px;
-    height:58.5px;
-    right:15px;
-    bottom:131.5px;
+    width: 40px;
+    height: 58.5px;
+    right: 15px;
+    bottom: 131.5px;
     background: rgba(255, 255, 255, 0.9);
     // border:0.5px solid #E6E6E6;
-    border:0.5px solid rgba(230, 230, 230, 1);
-    border-radius:20px;
-    font-size:12px;
+    border: 0.5px solid rgba(230, 230, 230, 1);
+    border-radius: 20px;
+    font-size: 12px;
     color: #666;
     img {
-      width:20px;
-      height:20px;
-      margin-bottom:4px;
+      width: 20px;
+      height: 20px;
+      margin-bottom: 4px;
     }
   }
   .complain-btn {
-    bottom:200.5px;
+    bottom: 200.5px;
   }
   .pay-wrap,
   .complain-wrap {
@@ -141,57 +144,57 @@
   }
   .pay-modal {
     position: relative;
-    width:260px;
-    height:280px;
+    width: 260px;
+    height: 280px;
     background-color: #fff;
-    border-radius:12px;
-    margin-top:105px;
+    border-radius: 12px;
+    margin-top: 105px;
     padding: 017.5px;
     line-height: 1;
     box-sizing: border-box;
     .content {
       color: #666;
-      margin-top:56px;
+      margin-top: 56px;
       text-align: center;
     }
     .price {
-      font-size:36px;
+      font-size: 36px;
       color: #fd6063;
-      margin-top:40px;
+      margin-top: 40px;
       text-align: center;
     }
     .pay-btn {
-      width:225px;
-      height:44px;
+      width: 225px;
+      height: 44px;
       background: @themeColor;
-      box-shadow:0px3px6.5px0px rgba(37, 211, 207, 0.4);
-      border-radius:8px;
-      margin-top:46px;
+      box-shadow: 0px3px6.5px0px rgba(37, 211, 207, 0.4);
+      border-radius: 8px;
+      margin-top: 46px;
       color: #fff;
     }
     .tips {
-      font-size:11px;
+      font-size: 11px;
       color: #a7a7a7;
-      margin-top:16px;
-      margin-left:5px;
+      margin-top: 16px;
+      margin-left: 5px;
     }
   }
   .close-btn {
     position: absolute;
-    padding:10px;
-    top:2px;
-    right:2px;
+    padding: 10px;
+    top: 2px;
+    right: 2px;
   }
   .complain-modal {
     position: relative;
-    width:260px;
-    height:379px;
-    border-radius:12px;
+    width: 260px;
+    height: 379px;
+    border-radius: 12px;
     background-color: #fff;
     .title {
       text-align: center;
-      margin-top:24px;
-      margin-bottom:9px;
+      margin-top: 24px;
+      margin-bottom: 9px;
     }
 
     .complain-form {
@@ -200,50 +203,49 @@
       box-sizing: border-box;
     }
     h2 {
-      font-size:13px;
-      color: #A7A7A7;
-      line-height:32.5px;
+      font-size: 13px;
+      color: #a7a7a7;
+      line-height: 32.5px;
     }
     .text-con {
       width: 100%;
       // padding: 015px;
-      height:100px;
-      border-radius:8px;
+      height: 100px;
+      border-radius: 8px;
       box-sizing: border-box;
       overflow: hidden;
       textarea {
         width: 100%;
         height: 100%;
         background-color: #f9f9f9;
-        padding:10px;
+        padding: 10px;
         box-sizing: border-box;
-
       }
     }
     .tel-con {
-      height:40px;
+      height: 40px;
       input {
         width: 100%;
         height: 100%;
         background-color: #f9f9f9;
         box-sizing: border-box;
         border: none;
-        padding:10px;
+        padding: 10px;
       }
     }
     .tips {
-      font-size:11px;
-      color: #A7A7A7;
-      line-height:17px;
-      margin-top:10px;
+      font-size: 11px;
+      color: #a7a7a7;
+      line-height: 17px;
+      margin-top: 10px;
     }
     .submit-btn {
-      height:44px;
+      height: 44px;
       background: @themeColor;
-      box-shadow:0px3px6.5px0px #25D3CF;
-      border-radius:8px;
+      box-shadow: 0px3px6.5px0px #25d3cf;
+      border-radius: 8px;
       color: #fff;
-      margin-top:15px;
+      margin-top: 15px;
     }
   }
 }

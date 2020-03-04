@@ -1,17 +1,17 @@
 import request from './_axios.conf'
-import wxToolkit from './_wxToolkit'
+import toolkit from './_toolkit'
 
 function fetch(params) {
-  const openId = sessionStorage.getItem('openId') || window.OPENID
+  const openId = localStorage.getItem('token') || window._TOKEN || 'djakjdksadhsaj'
   if (!openId) {
     return new Promise((resolve, reject) => {
-      wxToolkit.getOpenId(data => {
-        window.OPENID = data.openId
-        sessionStorage.setItem('openId', 'data.openId')
-        window.userInfo = { avatar: data.headUrl, nickName: data.nickName }
+      toolkit.login(data => {
+        window._TOKEN = data.token
+        localStorage.setItem('token', data.token)
+        window.userInfo = { avatar: data.user.headUrl, nickName: data.user.nickName }
         request({
           url: params.url || '',
-          data: { openId: data.openId, ...params.data }
+          data: { ...params.data }
         })
           .then(res => {
             resolve(res)
@@ -25,7 +25,7 @@ function fetch(params) {
     return new Promise((resolve, reject) => {
       request({
         url: params.url || '',
-        data: { openId, ...params.data }
+        data: { ...params.data }
       })
         .then(res => {
           resolve(res)

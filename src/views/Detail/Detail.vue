@@ -1,29 +1,31 @@
 <template>
-  <div class="detail-page">
+  <div class="detail-page" v-if="postDetail">
     <!-- 照片 -->
     <van-swipe class="photos" @change="onPhotoChange">
-      <van-swipe-item>1</van-swipe-item>
-      <van-swipe-item>2</van-swipe-item>
-      <van-swipe-item>3</van-swipe-item>
-      <van-swipe-item>4</van-swipe-item>
-      <div class="custom-indicator" slot="indicator">{{ current + 1 }}/4</div>
+      <van-swipe-item v-for="(item, index) in postDetail.imgs" :key="index">
+        <img :src="item" alt="" />
+      </van-swipe-item>
+      <div class="custom-indicator" slot="indicator">{{ current + 1 }}/{{ postDetail.imgs.length }}</div>
     </van-swipe>
     <!-- 相亲贴Item -->
     <section class="person-item">
       <!-- 个人信息 -->
       <div class="info">
         <div>
-          <span class="title">木子心</span>
-          <span>年龄:28岁 | 哪里人:北京</span>
+          <span class="title">{{ postDetail.name }}</span>
+          <span>年龄:{{ postDetail.age }}岁 | 哪里人:{{ postDetail.province }}</span>
         </div>
-        <div><span>职业:产品经理 | 现居:北京 | 学历:本科</span></div>
+        <div>
+          <span>
+            职业:{{ postDetail.occupation }} | 现居:{{ postDetail.workProvince }} | 学历:{{ postDetail.educational }}
+          </span>
+        </div>
       </div>
       <!-- 择偶标准 -->
       <div class="standard">
         <div class="text">
           <span class="title">择偶标准:</span>
-          每逢节日总喜欢做一些简单的布置，喜欢复刻一些有趣的菜式，也喜欢在房间里
-          每逢节日总喜欢做一些简单的布置，喜欢复刻一些有趣的菜式，也喜欢在房间里
+          {{ postDetail.standard }}
         </div>
       </div>
     </section>
@@ -41,11 +43,11 @@
       <div class="contact-way flex-between-center" v-if="!hasWx">
         <div class="contact-button flex-center" v-clipboard:copy="parentWx" v-clipboard:success="parentCopySuccess">
           <span>家长微信：</span>
-          <span>{{ parentWx }}</span>
+          <span>{{ postDetail.parentVx }}</span>
         </div>
         <div class="contact-button flex-center" v-clipboard:copy="mineWx" v-clipboard:success="mineCopySuccess">
           <span>本人微信：</span>
-          <span>{{ mineWx }}</span>
+          <span>{{ postDetail.vx }}</span>
         </div>
       </div>
       <div class="contact-way flex-between-center" v-else>
@@ -111,8 +113,9 @@
 </template>
 
 <script>
-import { reactive, toRefs } from '@vue/composition-api'
+import { reactive, toRefs, onMounted } from '@vue/composition-api'
 import Share from '@/components/Share.vue'
+import { getPostDetailApi } from '../../api/api'
 export default {
   components: {
     Share
@@ -131,7 +134,20 @@ export default {
       hasWx: false,
       parentWx: 'ZPS0326',
       mineWx: 'ZPS0000',
-      canEdite: true
+      canEdite: true,
+      postDetail: null
+    })
+    // 获取帖子详情
+    const getPostDetail = () => {
+      getPostDetailApi({
+        id: route.query.postId
+      }).then(({ data: resData }) => {
+        data.postDetail = resData.post
+      })
+    }
+
+    onMounted(() => {
+      getPostDetail()
     })
     const onPhotoChange = index => {
       data.current = index

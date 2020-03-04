@@ -8,13 +8,20 @@ const service = axios.create({
 // 请求配置
 service.interceptors.request.use(config => {
   config.method = 'post'
+  const token = localStorage.getItem('token')
+  if (token) {
+    config.data = {
+      token,
+      ...config.data
+    }
+  }
   return config
 })
 
 service.interceptors.response.use(
   response => {
     if (response.status === 200) {
-      if (response.data.bizStatus === 0) {
+      if (response.data.errorCode === 0) {
         return Promise.resolve(response)
       }
       return Promise.reject(response)

@@ -5,6 +5,11 @@ module.exports = {
     port: 80,
     disableHostCheck: true
   },
+  configureWebpack: {
+    externals: {
+      // BMap: 'BMap'
+    }
+  },
   publicPath: process.env.NODE_ENV === 'production' ? '' : process.env.NODE_ENV === 'alpha' ? '/' : '/',
   assetsDir: assetsDir,
   outputDir: process.env.NODE_ENV === 'production' ? 'dist' : process.env.NODE_ENV === 'alpha' ? 'test' : 'dist',

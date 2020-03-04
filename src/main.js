@@ -4,6 +4,8 @@ import router from './router'
 import VueCompositionApi from '@vue/composition-api'
 import Clipboard from 'vue-clipboard2'
 
+import './mock/mock.js'
+
 import 'lib-flexible'
 
 import '@/assets/css/common.less'
@@ -49,6 +51,7 @@ Vue.use(Button)
   .use(DatetimePicker)
   .use(Popup)
   .use(Picker)
+
 Vue.config.productionTip = false
 
 new Vue({

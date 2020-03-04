@@ -1,7 +1,7 @@
 import request from './_axios.conf'
 import _env from './_ENV'
 import wx from 'weixin-js-sdk'
-const wxToolkit = {
+const toolkit = {
   data: {
     appId: _env.appId,
     appSecret: '5af8f79d6ab703c0aec8f5e7c2506f58'
@@ -19,12 +19,12 @@ const wxToolkit = {
     return theRequest
   },
   // 获取 code
-  getOpenId(success, fail) {
+  login(success, fail) {
     let requestParams = this.getRequest()
     // code 已经拿到
     if (requestParams.code) {
       request({
-        url: '/api/makeMoneyGetUserInfo',
+        url: '/login',
         data: { code: requestParams.code }
       })
         .then(({ data }) => {
@@ -83,19 +83,19 @@ const wxToolkit = {
       success: success
     })
   },
-  wxGetLocation() {
+  // 根据百度地图获取定位城市
+  getLocationFromBidu(positionCb) {
+    // const geolocation = new window.BMap.Geolocation()
+    // geolocation.getCurrentPosition(positionSucess, positionFail)
     wx.getLocation({
-      type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-      success: function(res) {
-        var latitude = res.latitude // 纬度，浮点数，范围为90 ~ -90
-        var longitude = res.longitude // 经度，浮点数，范围为180 ~ -180。
-        var speed = res.speed // 速度，以米/每秒计
-        var accuracy = res.accuracy // 位置精度
-        console.log(latitude, longitude, speed, accuracy)
-        // FIXME:根据以上参数发请求得到省份名称
+      type: 'wgs84',
+      success: res => {
+        const point = new window.BMap.Point(res.latitude, res.longitude)
+        const gc = new window.BMap.Geocoder()
+        gc.getLocation(point, positionCb)
       }
     })
   }
 }
 
-export default wxToolkit
+export default toolkit

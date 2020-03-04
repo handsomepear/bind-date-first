@@ -123,6 +123,7 @@
 <script>
 import { reactive, toRefs, onMounted, onBeforeUnmount } from '@vue/composition-api'
 import areaList from '../../assets/data/area'
+import { cretePostApi } from '../../api/api'
 export default {
   setup(props, context) {
     const router = context.root.$router
@@ -132,21 +133,12 @@ export default {
     console.log(route.params)
     const data = reactive({
       standard: '', // 择偶标准
-      sexOptions: [
-        {
-          name: '男',
-          value: 0
-        },
-        {
-          name: '女',
-          value: 1
-        }
-      ],
+      sexOptions: [{ name: '男' }, { name: '女' }],
       educationList: ['高中', '专科', '本科', '研究生', '博士'],
       minDate: new Date(1950, 0, 1),
       maxDate: new Date(2020, 11, 1),
       name: '',
-      sex: {},
+      sex: '',
       birthday: '',
       homeTown: {}, // 家乡
       job: '', // 工作
@@ -184,7 +176,9 @@ export default {
     const onSelectHome = home => {
       data.homeTown = {
         name: home.map(item => item.name).join('-'),
-        code: home[home.length - 1].code
+        code: home[home.length - 1].code,
+        province: home[0].name,
+        city: home[1].name
       }
       data.isShowHomePicker = false
     }
@@ -192,12 +186,13 @@ export default {
     const onSelectWorkplace = workplace => {
       data.workplace = {
         name: workplace.map(item => item.name).join('-'),
-        code: workplace[workplace.length - 1].code
+        code: workplace[workplace.length - 1].code,
+        province: workplace[0].name,
+        city: workplace[1].name
       }
       data.isShowWorkplacePicker = false
     }
-    const onSelectEducation = (education, index) => {
-      console.log(index)
+    const onSelectEducation = education => {
       data.education = education
       data.isShowEducationPicker = false
     }
@@ -239,6 +234,24 @@ export default {
         return Toast('请填写择偶标准')
       }
       // 提交表单上传图片
+      cretePostApi({
+        post: {
+          name: data.name,
+          birth: data.birthday,
+          province: data.homeTown.province,
+          city: data.homeTown.city,
+          workProvince: data.workplace.province,
+          workCity: data.workplace.city,
+          occupation: data.job,
+          educational: data.education,
+          standard: data.standard,
+          vx: data.mineWx, //本人微信
+          parentVx: data.parentWx, //家长微信
+          imgs: data.photos.map(item => item.urls)
+        }
+      }).then(({ data: resData }) => {
+        console.log(resData)
+      })
     }
 
     return {
