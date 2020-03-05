@@ -6,14 +6,16 @@
     </section>
     <section class="created">
       <h2>我创建的</h2>
-      <div class="item-con " v-for="(item, index) in list" :key="item">
+      <div class="item-con " v-for="(item, index) in mineList" :key="item.id" @click="toDetailPage(item.id)">
         <div :class="['person-item', 'flex-between-center', index == 0 ? 'van-hairline--bottom' : 0]">
           <div class="info">
             <div>
-              <span class="title">木子心</span>
-              <span>年龄:28岁 | 哪里人:北京</span>
+              <span class="title">{{ item.name }}</span>
+              <span>年龄:{{ item.age }}岁 | 哪里人:{{ item.province }}</span>
             </div>
-            <div><span>职业:产品经理 | 现居:北京 | 学历:本科</span></div>
+            <div>
+              <span>职业:{{ item.occupation }} | 现居:{{ item.workProvince }} | 学历:{{ item.educational }}</span>
+            </div>
           </div>
           <van-icon name="arrow" size="17" />
         </div>
@@ -22,14 +24,16 @@
     <section class="buyed">
       <h2>我购买的</h2>
 
-      <div class="item-con " v-for="(item, index) in list" :key="item">
+      <div class="item-con " v-for="(item, index) in buyList" :key="item.id" @click="toDetailPage(item.id)">
         <div :class="['person-item', 'flex-between-center', index == 0 ? 'van-hairline--bottom' : 0]">
           <div class="info">
             <div>
-              <span class="title">木子心</span>
-              <span>年龄:28岁 | 哪里人:北京</span>
+              <span class="title">{{ item.name }}</span>
+              <span>年龄:{{ item.age }}岁 | 哪里人:{{ item.province }}</span>
             </div>
-            <div><span>职业:产品经理 | 现居:北京 | 学历:本科</span></div>
+            <div>
+              <span>职业:{{ item.occupation }} | 现居:{{ item.workProvince }} | 学历:{{ item.educational }}</span>
+            </div>
           </div>
           <van-icon name="arrow" size="17" />
         </div>
@@ -45,15 +49,32 @@
 </template>
 
 <script>
-import { reactive, toRefs } from '@vue/composition-api'
+import { reactive, toRefs, onMounted } from '@vue/composition-api'
+import { getHomepageInfoApi } from '../../api/api'
 export default {
-  setup() {
+  setup(props, context) {
+    const router = context.root.$router
     const data = reactive({
-      list: [0, 1]
+      mineList: [],
+      buyList: [],
+      userInfo: {}
     })
 
+    onMounted(() => {
+      getHomepageInfoApi().then(({ data: resData }) => {
+        data.mineList = resData.mineList
+        data.buyList = resData.buyList
+        data.userInfo = resData.info
+      })
+    })
+
+    const toDetailPage = postId => {
+      router.push({ path: '/detail', query: { postId } })
+    }
+
     return {
-      ...toRefs(data)
+      ...toRefs(data),
+      toDetailPage
     }
   }
 }

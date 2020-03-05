@@ -1,13 +1,34 @@
 const path = require('path')
 const assetsDir = 'assets'
+const CompressionPlugin = require('compression-webpack-plugin')
 module.exports = {
   devServer: {
     port: 80,
     disableHostCheck: true
   },
-  configureWebpack: {
-    externals: {
-      // BMap: 'BMap'
+  configureWebpack: config => {
+    /**
+     * key: src代码中引入的包名  import Vue from 'key'
+     * value: 是js文件中导出的变量名
+     * 配置了这一项之后 就不需要再 install 对应的库了， 只需要引入在这里设置的别名 也就是 key 值就可以了
+     */
+    config.externals = {
+      vue: 'Vue',
+      'vue-router': 'VueRouter',
+      vant: 'vant',
+      wx: 'wx',
+      axios: 'axios'
+    }
+    if (process.env.NODE_ENV === 'production') {
+      return {
+        plugins: [
+          new CompressionPlugin({
+            test: /\.js$|\.html$|.\css/, //匹配文件名
+            threshold: 10240, //对超过10k的数据压缩
+            deleteOriginalAssets: false //不删除源文件
+          })
+        ]
+      }
     }
   },
   publicPath: process.env.NODE_ENV === 'production' ? '' : process.env.NODE_ENV === 'alpha' ? '/' : '/',

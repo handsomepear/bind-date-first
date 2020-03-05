@@ -1,6 +1,6 @@
 import request from './_axios.conf'
 import _env from './_ENV'
-import wx from 'weixin-js-sdk'
+import wx from 'wx'
 const toolkit = {
   data: {
     appId: _env.appId,

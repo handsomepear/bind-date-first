@@ -67,7 +67,7 @@
         <van-icon name="add-o" size="20" />创建相亲贴
       </div>
       <!-- 我的 -->
-      <div class="mine-button flex-box flex-center">我的</div>
+      <div class="mine-button flex-box flex-center" @click="toMinPage">我的</div>
       <!-- 分享 -->
       <Share />
     </section>
@@ -130,7 +130,7 @@ export default {
     })
 
     const getPostList = () => {
-      console.log('load')
+      // console.log('load')
       data.loading = true
       getPostListApi({
         pageSize: 5,
@@ -148,6 +148,7 @@ export default {
           }
         })
         .catch(err => {
+          // eslint-disable-next-line no-console
           console.log(err)
         })
     }
@@ -188,6 +189,9 @@ export default {
     const toCreatePage = () => {
       router.push({ path: '/create' })
     }
+    const toMinPage = () => {
+      router.push({ path: '/mine' })
+    }
     return {
       areaList,
       ...toRefs(data),
@@ -197,7 +201,8 @@ export default {
       onChooseTab,
       getPostList,
       onViewDetail,
-      toCreatePage
+      toCreatePage,
+      toMinPage
     }
   }
 }

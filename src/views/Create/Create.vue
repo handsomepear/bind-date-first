@@ -59,11 +59,11 @@
         readonly
         @click="isShowWorkplacePicker = true"
       />
-      <van-field v-model="mineWx" name="mineWx" label="本人微信号:" placeholder="请输入" input-align="right" />
-      <van-field v-model="parentWx" name="parentWx" label="家长微信号:" placeholder="请输入" input-align="right" />
+      <van-field v-model="mineWx" name="mineWx" label="本人微信:" placeholder="请输入" input-align="right" />
+      <van-field v-model="parentWx" name="parentWx" label="家长微信:" placeholder="请输入" input-align="right" />
       <section class="upload-con">
         <div class="label">图片：</div>
-        <van-field name="uploader">
+        <van-field name="photos">
           <template #input>
             <van-uploader multiple :max-count="9" v-model="photos" :before-read="onBeforerUpload" />
           </template>
@@ -121,16 +121,14 @@
 </template>
 
 <script>
-import { reactive, toRefs, onMounted, onBeforeUnmount } from '@vue/composition-api'
+import { reactive, toRefs, onMounted } from '@vue/composition-api'
 import areaList from '../../assets/data/area'
 import { cretePostApi } from '../../api/api'
 export default {
   setup(props, context) {
-    const router = context.root.$router
+    // const router = context.root.$router
     const route = context.root.$route
     const Toast = context.root.$toast
-    console.log(router)
-    console.log(route.params)
     const data = reactive({
       standard: '', // 择偶标准
       sexOptions: [{ name: '男' }, { name: '女' }],
@@ -140,10 +138,20 @@ export default {
       name: '',
       sex: '',
       birthday: '',
-      homeTown: {}, // 家乡
+      homeTown: {
+        name: '',
+        code: '',
+        province: '',
+        city: ''
+      }, // 家乡
       job: '', // 工作
       education: '', // 学历
-      workplace: {}, // 工作地点
+      workplace: {
+        name: '',
+        code: '',
+        province: '',
+        city: ''
+      }, // 工作地点
       mineWx: '',
       parentWx: '',
       photos: [{ url: 'https://img.yzcdn.cn/vant/leaf.jpg' }],
@@ -154,16 +162,35 @@ export default {
       isShowEducationPicker: false
     })
 
+    const initData = postDetail => {
+      data.name = postDetail.name
+      data.birthday = postDetail.birth
+      data.homeTown = {
+        name: postDetail.province + '-' + postDetail.city,
+        province: postDetail.province,
+        city: postDetail.city
+      }
+      data.job = postDetail.occupation
+      data.workplace = {
+        name: postDetail.workProvince + '-' + postDetail.workCity,
+        province: postDetail.workProvince,
+        city: postDetail.workProvince
+      }
+      data.education = data.educational
+      data.mineWx = postDetail.vx
+      data.parentWx = postDetail.parentVx
+    }
+
     // 生命周期
     onMounted(() => {
       const formData = route.params.formData ? JSON.parse(route.params.formData) : null
-      console.log(formData)
+
+      if (formData) {
+        initData(formData.postDetail)
+      }
     })
 
-    onBeforeUnmount(() => {})
-
     const onSelectSex = sex => {
-      console.log(sex)
       data.sex = sex
       data.isShowSexSheet = false
     }
@@ -208,7 +235,6 @@ export default {
 
     // 提交表单的时候上传图片到服务器
     const onSubmit = values => {
-      console.log(values)
       if (!values.name) {
         return Toast('请填写姓名信息')
       }
@@ -247,9 +273,10 @@ export default {
           standard: data.standard,
           vx: data.mineWx, //本人微信
           parentVx: data.parentWx, //家长微信
-          imgs: data.photos.map(item => item.urls)
+          imgs: data.photos.map(item => item.url)
         }
       }).then(({ data: resData }) => {
+        // eslint-disable-next-line no-console
         console.log(resData)
       })
     }

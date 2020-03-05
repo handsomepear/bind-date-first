@@ -125,7 +125,6 @@ export default {
     const route = context.root.$route // 拿参数信息
     const Toast = context.root.$toast
     const Dialog = context.root.$dialog
-    console.log(route.query)
     const data = reactive({
       current: 0,
       isShowPayModal: false, // 是否展示支付弹窗
@@ -175,7 +174,6 @@ export default {
 
     // 编辑帖子
     const onEdite = () => {
-      console.log(data)
       const formData = JSON.stringify(data)
       // if(formData.postId !== postId) {
 
@@ -190,10 +188,10 @@ export default {
         cancel: () => {}
       })
         .then(() => {
-          console.log('确认删除')
+          // console.log('确认删除')
         })
         .catch(() => {
-          console.log('取消')
+          // console.log('取消')
         })
     }
     return {

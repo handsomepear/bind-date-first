@@ -29,8 +29,8 @@ export const getPostDetailApi = data => {
   })
 }
 
-export const getMyPostListApi = () => {
+export const getHomepageInfoApi = () => {
   return fetch({
-    url: '/post/homepage'
+    url: '/homepage'
   })
 }

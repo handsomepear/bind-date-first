@@ -32,6 +32,10 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  // const timestamp = localStorage.getItem('timestamp')
+  // const nonceStr = localStorage.getItem('nonceStr')
+  // const signature = localStorage.getItem('signature')
+  // toolkit.wxConfig({ timestamp, nonceStr, signature })
   if (toolkit.isWeChatUrl()) {
     window.location.href = toolkit.getProjectUrl()
   }
