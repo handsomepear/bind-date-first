@@ -25,7 +25,7 @@ const toolkit = {
     if (requestParams.code) {
       request({
         url: '/login',
-        data: { code: requestParams.code }
+        data: { code: requestParams.code, proxyId: requestParams.proxyId || null }
       })
         .then(({ data }) => {
           success && success(data)
@@ -57,14 +57,19 @@ const toolkit = {
     let location = window.location
     return location.origin + location.pathname + location.hash
   },
-  wxConfig({ timestamp, nonceStr, signature }) {
-    wx.config({
-      debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-      appId: _env.appId, // 必填，公众号的唯一标识
-      timestamp: timestamp, // 必填，生成签名的时间戳
-      nonceStr: nonceStr, // 必填，生成签名的随机串
-      signature: signature, // 必填，签名
-      jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline', 'getLocation', 'chooseWXPay'] // 必填，需要使用的JS接口列表
+  wxConfig() {
+    request({
+      url: '/jssdkconfig',
+      data: { url: window.location.href.split('#')[0] }
+    }).then(({ data }) => {
+      wx.config({
+        debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        appId: _env.appId, // 必填，公众号的唯一标识
+        timestamp: data.timestamp, // 必填，生成签名的时间戳
+        nonceStr: data.nonceStr, // 必填，生成签名的随机串
+        signature: data.signature, // 必填，签名
+        jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline', 'getLocation', 'chooseWXPay'] // 必填，需要使用的JS接口列表
+      })
     })
   },
   wxShare(target, params) {
@@ -87,13 +92,15 @@ const toolkit = {
   getLocationFromBidu(positionCb) {
     // const geolocation = new window.BMap.Geolocation()
     // geolocation.getCurrentPosition(positionSucess, positionFail)
-    wx.getLocation({
-      type: 'wgs84',
-      success: res => {
-        const point = new window.BMap.Point(res.latitude, res.longitude)
-        const gc = new window.BMap.Geocoder()
-        gc.getLocation(point, positionCb)
-      }
+    wx.ready(() => {
+      wx.getLocation({
+        type: 'wgs84',
+        success: res => {
+          const point = new window.BMap.Point(res.latitude, res.longitude)
+          const gc = new window.BMap.Geocoder()
+          gc.getLocation(point, positionCb)
+        }
+      })
     })
   }
 }

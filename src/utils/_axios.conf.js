@@ -7,7 +7,7 @@ const service = axios.create({
 
 // 请求配置
 service.interceptors.request.use(config => {
-  config.method = 'post'
+  config.method = 'POST'
   const token = localStorage.getItem('token')
   if (token) {
     config.data = {

@@ -4,7 +4,12 @@ const CompressionPlugin = require('compression-webpack-plugin')
 module.exports = {
   devServer: {
     port: 80,
-    disableHostCheck: true
+    disableHostCheck: true,
+    proxy: {
+      '/': {
+        target: 'https://www.geinigejuzichi.top/api_server/'
+      }
+    }
   },
   configureWebpack: config => {
     /**

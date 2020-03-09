@@ -3,7 +3,7 @@
     <section class="head">
       <div class="top">
         <div class="area-type" @click="isShowType = true">{{ type }} <van-icon name="arrow-down" /></div>
-        <div class="area-type" @click="isShowAreaPanel = true">{{ locationName }}<van-icon name="arrow-down" /></div>
+        <div class="area-type" @click="isShowAreaPanel = true">{{ location.name }}<van-icon name="arrow-down" /></div>
       </div>
       <section class="tab-list">
         <div :class="['tab-item flex-box flex-center', tabIndex === 0 ? 'choosed' : '']" @click="onChooseTab(0)">
@@ -106,8 +106,11 @@ export default {
     const data = reactive({
       // 地域类型
       type: '家乡',
-      locationName: '天津-天津',
-      locationCode: '',
+      location: {
+        name: '',
+        province: '',
+        city: ''
+      },
       isShowType: false,
       isShowAreaPanel: false,
       tabIndex: 0,
@@ -134,16 +137,16 @@ export default {
       data.loading = true
       getPostListApi({
         pageSize: 5,
-        pageRecord: data.nextPage
+        pageRecord: data.nextPage,
+        province: data.location.province,
+        city: data.location.city,
+        sex: 1 //1：男 2：女
       })
         .then(({ data: resData }) => {
           data.postList = data.postList.concat(resData.list)
           data.nextPage = resData.nextPageRecord // 获取下一页的数据的参数
           data.loading = false
-          // if (!resData.list || !resData.list.length) {
-          //   data.finished = true
-          // }
-          if (data.postList.length > 20) {
+          if (!resData.list || data.postList.length < 5) {
             data.finished = true // 控制列表是否加载完毕
           }
         })
@@ -154,7 +157,7 @@ export default {
     }
 
     onMounted(() => {
-      getPostList()
+      // toolkit.wxConfig()
       toolkit.getLocationFromBidu(position => {
         var address = position.addressComponents
         // streetNumber: "3号"
@@ -162,8 +165,14 @@ export default {
         // district: "海淀区"
         // city: "北京市"
         // province: "北京市"
-        data.locationName = `${address.province}-${address.city}`
+        data.location = {
+          name: `${address.province}-${address.city}`,
+          province: address.province,
+          city: address.city
+        }
+        getPostList()
       })
+      getPostList()
     })
 
     // 类型选择
@@ -173,7 +182,7 @@ export default {
     }
     // 地区选择
     const onChooseArea = area => {
-      data.locationName = area.reduce((prev, next) => {
+      data.location.name = area.reduce((prev, next) => {
         return next ? prev.name + '-' + next.name : prev.name + '-' + prev.name
       })
       data.locationCode = area[1] ? area[1].code : area[0].code
