@@ -1,6 +1,7 @@
 <template>
   <div class="create-page">
-    <h2 class="title">创建相亲贴</h2>
+    <!-- <h2 class="title">创建相亲贴</h2> -->
+    <Title name="创建相亲贴" color="#333" />
     <van-form @submit="onSubmit">
       <van-field v-model="name" name="name" label="姓名:" placeholder="请输入" input-align="right" />
       <van-field
@@ -123,8 +124,12 @@
 <script>
 import { reactive, toRefs, onMounted } from '@vue/composition-api'
 import areaList from '../../assets/data/area'
+import Title from '@/components/Title'
 import { cretePostApi } from '../../api/api'
 export default {
+  components: {
+    Title
+  },
   setup(props, context) {
     // const router = context.root.$router
     const route = context.root.$route

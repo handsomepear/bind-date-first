@@ -1,5 +1,6 @@
 <template>
   <div class="mine-page">
+    <Title name="地区筛选" color="#333" />
     <section class="mine-info flex-start-center">
       <div class="avatar"></div>
       <div class="nickname">Zps</div>
@@ -50,8 +51,12 @@
 
 <script>
 import { reactive, toRefs, onMounted } from '@vue/composition-api'
+import Title from '@/components/Title'
 import { getHomepageInfoApi } from '../../api/api'
 export default {
+  components: {
+    Title
+  },
   setup(props, context) {
     const router = context.root.$router
     const data = reactive({

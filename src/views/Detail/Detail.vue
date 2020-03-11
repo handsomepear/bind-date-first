@@ -1,5 +1,6 @@
 <template>
   <div class="detail-page" v-if="postDetail">
+    <Title :name="postDetail.name + '的相亲详情'" />
     <!-- 照片 -->
     <van-swipe class="photos" @change="onPhotoChange">
       <van-swipe-item v-for="(item, index) in postDetail.imgs" :key="index">
@@ -114,11 +115,13 @@
 
 <script>
 import { reactive, toRefs, onMounted } from '@vue/composition-api'
+import Title from '@/components/Title.vue'
 import Share from '@/components/Share.vue'
 import { getPostDetailApi } from '../../api/api'
 export default {
   components: {
-    Share
+    Share,
+    Title
   },
   setup(props, context) {
     const router = context.root.$router // 路由实例
@@ -139,7 +142,7 @@ export default {
     // 获取帖子详情
     const getPostDetail = () => {
       getPostDetailApi({
-        id: route.query.postId
+        id: route.params.postId
       }).then(({ data: resData }) => {
         data.postDetail = resData.post
       })

@@ -11,7 +11,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "Home" */ '../views/Home/Home.vue')
   },
   {
-    path: '/detail',
+    path: '/detail/:postId',
     name: 'Detail',
     component: () => import(/* webpackChunkName: "Detail" */ '../views/Detail/Detail.vue')
   },
@@ -41,5 +41,4 @@ router.beforeEach((to, from, next) => {
   }
   next()
 })
-
 export default router

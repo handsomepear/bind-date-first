@@ -44,7 +44,7 @@
             <div class="text">
               <span class="title">择偶标准:</span>
               {{ item.standard }}
-              <span class="more" @click="onViewDetail(item.i)"> 详情>></span>
+              <span class="more" @click="onViewDetail(item.id)"> 详情>></span>
             </div>
           </div>
           <!-- 照片 -->
@@ -193,7 +193,7 @@ export default {
       data.tabIndex = index
     }
     const onViewDetail = postId => {
-      router.push({ path: '/detail', query: { postId } })
+      router.push({ path: '/detail/' + postId })
     }
     const toCreatePage = () => {
       router.push({ path: '/create' })
