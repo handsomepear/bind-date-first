@@ -146,7 +146,7 @@ export default {
           data.postList = data.postList.concat(resData.list)
           data.nextPage = resData.nextPageRecord // 获取下一页的数据的参数
           data.loading = false
-          if (!resData.list || data.postList.length < 5) {
+          if (!resData.list || resData.postList.length < 5) {
             data.finished = true // 控制列表是否加载完毕
           }
         })
@@ -157,8 +157,9 @@ export default {
     }
 
     onMounted(() => {
-      // toolkit.wxConfig()
+      toolkit.wxConfig()
       toolkit.getLocationFromBidu(position => {
+        console.log(position)
         var address = position.addressComponents
         // streetNumber: "3号"
         // street: "中关村北一条"
@@ -172,7 +173,6 @@ export default {
         }
         getPostList()
       })
-      getPostList()
     })
 
     // 类型选择

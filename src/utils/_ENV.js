@@ -9,7 +9,7 @@ switch (process.env.NODE_ENV) {
     break
   case 'alpha': // 注意这里的名字要和步骤二中设置的环境名字对应起来
     _env.baseURL = ''
-    _env.appId = ''
+    _env.appId = 'wx24d7b0aea3ee24bd'
     break
   case 'production':
     _env.baseURL = ''
