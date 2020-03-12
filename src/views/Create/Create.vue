@@ -131,7 +131,7 @@ export default {
     Title
   },
   setup(props, context) {
-    // const router = context.root.$router
+    const router = context.root.$router
     const route = context.root.$route
     const Toast = context.root.$toast
     const data = reactive({
@@ -281,8 +281,7 @@ export default {
           imgs: data.photos.map(item => item.url)
         }
       }).then(({ data: resData }) => {
-        // eslint-disable-next-line no-console
-        console.log(resData)
+        router.replace({ path: '/detail/' + resData.id })
       })
     }
 

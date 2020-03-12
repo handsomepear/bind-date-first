@@ -6,10 +6,10 @@
         <div class="area-type" @click="isShowAreaPanel = true">{{ location.name }}<van-icon name="arrow-down" /></div>
       </div>
       <section class="tab-list">
-        <div :class="['tab-item flex-box flex-center', tabIndex === 0 ? 'choosed' : '']" @click="onChooseTab(0)">
+        <div :class="['tab-item flex-box flex-center', tabSex === 2 ? 'choosed' : '']" @click="onChooseTab(2)">
           女生
         </div>
-        <div :class="['tab-item flex-box flex-center', tabIndex === 1 ? 'choosed' : '']" @click="onChooseTab(1)">
+        <div :class="['tab-item flex-box flex-center', tabSex === 1 ? 'choosed' : '']" @click="onChooseTab(1)">
           男生
         </div>
       </section>
@@ -18,14 +18,59 @@
     <section class="main">
       <!-- 列表 -->
       <van-list
-        v-model="loading"
-        :finished="finished"
+        v-show="tabSex === 2"
+        v-model="female.loading"
+        :finished="female.finished"
         finished-text="没有更多了"
         :immediate-check="false"
         @load="getPostList"
       >
         <!-- 相亲贴Item -->
-        <section class="person-item van-hairline--bottom" v-for="item in postList" :key="item.id">
+        <section class="person-item van-hairline--bottom" v-for="item in female.postList" :key="item.id">
+          <!-- 个人信息 -->
+          <div class="info">
+            <div>
+              <span class="title">{{ item.name }}</span>
+              <span>年龄:{{ item.age }}岁 | 哪里人:{{ item.province }}-{{ item.city }}</span>
+            </div>
+            <div>
+              <span>
+                职业:{{ item.occupation }} | 现居:{{ item.workProvince }}-{{ item.workCity }} | 学历:
+                {{ item.educational }}
+              </span>
+            </div>
+          </div>
+          <!-- 择偶标准 -->
+          <div class="standard">
+            <div class="text">
+              <span class="title">择偶标准:</span>
+              {{ item.standard }}
+              <span class="more" @click="onViewDetail(item.id)"> 详情>></span>
+            </div>
+          </div>
+          <!-- 照片 -->
+          <div class="photos">
+            <div class="photo-box" v-for="(photoItem, photoIndex) in item.imgs.slice(0, 6)" :key="photoIndex">
+              <img :src="photoItem" alt="" />
+            </div>
+          </div>
+          <!-- bottom -->
+          <div class="item-bottom flex-box flex-between-center">
+            <div class="release-time">发布时间：{{ item.publishTime }}</div>
+            <div class="contact-way" @click="onViewDetail(item.id)">查看联系方式>></div>
+          </div>
+        </section>
+      </van-list>
+      <van-list
+        v-show="tabSex === 1"
+        v-model="male.loading"
+        :finished="male.finished"
+        finished-text="没有更多了"
+        :immediate-check="false"
+        @load="getPostList"
+      >
+        <!-- 相亲贴Item -->
+        <section class="person-item van-hairline--bottom" v-for="item in male.postList" :key="item.id">
           <!-- 个人信息 -->
           <div class="info">
             <div>
@@ -113,12 +158,21 @@ export default {
       },
       isShowType: false,
       isShowAreaPanel: false,
-      tabIndex: 0,
+      tabSex: 2, // 1：男 2：女
+      male: {
+        loading: false,
+        finished: false,
+        nextPage: '',
+        postList: []
+      },
+      female: {
+        loading: false,
+        finished: false,
+        nextPage: '',
+        postList: []
+      },
       // 列表相关
-      loading: false,
-      finished: false,
-      nextPage: '',
-      postList: [],
+
       // 地域类型配置
       typeOptions: [
         {
@@ -137,17 +191,18 @@ export default {
       data.loading = true
       getPostListApi({
         pageSize: 5,
-        pageRecord: data.nextPage,
+        pageRecord: data.tabSex === 2 ? data.female.nextPage : data.male.nextPage,
         province: data.location.province,
         city: data.location.city,
-        sex: 1 //1：男 2：女
+        sex: data.tabSex
       })
         .then(({ data: resData }) => {
-          data.postList = data.postList.concat(resData.list)
-          data.nextPage = resData.nextPageRecord // 获取下一页的数据的参数
-          data.loading = false
-          if (!resData.list || resData.postList.length < 5) {
-            data.finished = true // 控制列表是否加载完毕
+          const sex = data.tabSex === 2 ? 'female' : 'male'
+          data[sex].postList = data[sex].postList.concat(resData.list)
+          data[sex].nextPage = resData.nextPageRecord // 获取下一页的数据的参数
+          data[sex].loading = false
+          if (!resData.list || resData.list.length < 5) {
+            data[sex].finished = true // 控制列表是否加载完毕
           }
         })
         .catch(err => {
@@ -159,7 +214,6 @@ export default {
     onMounted(() => {
       toolkit.wxConfig()
       toolkit.getLocationFromBidu(position => {
-        console.log(position)
         var address = position.addressComponents
         // streetNumber: "3号"
         // street: "中关村北一条"
@@ -189,8 +243,11 @@ export default {
       data.isShowAreaPanel = false
     }
     // Tab选择
-    const onChooseTab = index => {
-      data.tabIndex = index
+    const onChooseTab = sex => {
+      data.tabSex = sex
+      if ((sex === 2 && !data.female.postList.length) || (sex === 1 && !data.male.postList.length)) {
+        getPostList()
+      }
     }
     const onViewDetail = postId => {
       router.push({ path: '/detail/' + postId })

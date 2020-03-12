@@ -132,11 +132,11 @@ export default {
       current: 0,
       isShowPayModal: false, // 是否展示支付弹窗
       isShowComplainModal: false, // 是否展示投诉弹窗
-      isShowComplainBtn: false, // 是否展示投诉按钮
+      isShowComplainBtn: true, // 是否展示投诉按钮
       hasWx: false,
       parentWx: 'ZPS0326',
       mineWx: 'ZPS0000',
-      canEdite: true,
+      canEdite: false,
       postDetail: null
     })
     // 获取帖子详情

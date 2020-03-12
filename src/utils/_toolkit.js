@@ -96,7 +96,7 @@ const toolkit = {
       wx.getLocation({
         type: 'wgs84',
         success: res => {
-          const point = new window.BMap.Point(res.latitude, res.longitude)
+          const point = new window.BMap.Point(res.longitude, res.latitude)
           const gc = new window.BMap.Geocoder()
           gc.getLocation(point, positionCb)
         }
