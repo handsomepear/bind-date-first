@@ -1,20 +1,5 @@
 <template>
   <div class="home-page">
-    <section class="head">
-      <div class="top">
-        <div class="area-type" @click="isShowType = true">{{ type }} <van-icon name="arrow-down" /></div>
-        <div class="area-type" @click="isShowAreaPanel = true">{{ location.name }}<van-icon name="arrow-down" /></div>
-      </div>
-      <section class="tab-list">
-        <div :class="['tab-item flex-box flex-center', tabSex === 2 ? 'choosed' : '']" @click="onChooseTab(2)">
-          女生
-        </div>
-        <div :class="['tab-item flex-box flex-center', tabSex === 1 ? 'choosed' : '']" @click="onChooseTab(1)">
-          男生
-        </div>
-      </section>
-    </section>
-
     <section class="main">
       <!-- 列表 -->
       <van-list
@@ -105,6 +90,24 @@
           </div>
         </section>
       </van-list>
+    </section>
+    <!-- head 放到这里解决 share 组件内部 z-index 设置之后无法覆盖掉头部的问题 -->
+    <!-- 这是由于head 设置了 z-index 为 1 高于了 Share 组件, 那么在 Share 组件内部的 wrap 也就无法盖住 head 了 -->
+    <section class="head">
+      <div class="top">
+        <div class="area-type" @click="isShowType = true">{{ type }} <van-icon name="arrow-down" /></div>
+        <div class="area-type" @click="isShowAreaPanel = true">
+          {{ filterLocation(location.name) }}<van-icon name="arrow-down" />
+        </div>
+      </div>
+      <section class="tab-list">
+        <div :class="['tab-item flex-box flex-center', tabSex === 2 ? 'choosed' : '']" @click="onChooseTab(2)">
+          女生
+        </div>
+        <div :class="['tab-item flex-box flex-center', tabSex === 1 ? 'choosed' : '']" @click="onChooseTab(1)">
+          男生
+        </div>
+      </section>
     </section>
     <section class="bottom-options flex-box flex-between-center">
       <!-- 创建相亲贴 -->
@@ -204,6 +207,18 @@ export default {
           if (!resData.list || resData.list.length < 5) {
             data[sex].finished = true // 控制列表是否加载完毕
           }
+          const shareItem = data[sex].postList[0]
+          toolkit.wxShare('onMenuShareTimeline', {
+            title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
+            link: '//bbs.j.cn/', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: shareItem.imgs[0] // 分享图标
+          })
+          toolkit.wxShare('onMenuShareAppMessage', {
+            title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
+            desc: `年龄:${shareItem.age}, 家乡:${shareItem.province}, 职业:${shareItem.occupation}, 工作地点:${shareItem.workProvince}, 择偶标准:${shareItem.standard}`, // 分享描述
+            link: '//bbs.j.cn/', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: shareItem.imgs[0]
+          })
         })
         .catch(err => {
           // eslint-disable-next-line no-console
@@ -222,12 +237,18 @@ export default {
         // province: "北京市"
         data.location = {
           name: `${address.province}-${address.city}`,
-          province: address.province,
-          city: address.city
+          province: address.province || '北京',
+          city: address.city || '北京'
         }
         getPostList()
       })
     })
+
+    const filterLocation = location => {
+      const locationList = ['北京市-北京市', '天津市-天津市', '上海市-上海市', '重庆市-重庆市']
+      const index = locationList.indexOf(location)
+      return index > -1 ? locationList[index].slice(0, 2) : location
+    }
 
     // 类型选择
     const onSelectType = item => {
@@ -258,6 +279,9 @@ export default {
     const toMinPage = () => {
       router.push({ path: '/mine' })
     }
+    const onShare = () => {
+      data.isShowShareTips = true
+    }
     return {
       areaList,
       ...toRefs(data),
@@ -268,7 +292,9 @@ export default {
       getPostList,
       onViewDetail,
       toCreatePage,
-      toMinPage
+      toMinPage,
+      onShare,
+      filterLocation
     }
   }
 }

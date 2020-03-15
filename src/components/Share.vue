@@ -1,16 +1,38 @@
 <template>
   <!-- 分享 -->
-  <div class="share-button">
-    <div class="share-img">
-      <img src="../assets/imgs/share.png" alt="" />
+  <div class="share-com">
+    <div class="share-button" @click="onShowShareTips">
+      <div class="share-img">
+        <img src="../assets/imgs/share.png" alt="" />
+      </div>
+      <span>分享</span>
     </div>
-    <span>分享</span>
+    <div class="share-wrap" v-show="isShowShareTips" @click="onHideShareTips">
+      <!-- <van-button @click="onHideShareTips">关闭</van-button> -->
+      <img class="share-tips" src="../assets/imgs/share-tips.png" alt="" />
+    </div>
   </div>
 </template>
 
 <script>
+import { ref } from '@vue/composition-api'
 export default {
-  setup() {}
+  setup() {
+    const isShowShareTips = ref(false)
+    const onShowShareTips = () => {
+      isShowShareTips.value = true
+    }
+
+    const onHideShareTips = () => {
+      isShowShareTips.value = false
+    }
+
+    return {
+      isShowShareTips,
+      onShowShareTips,
+      onHideShareTips
+    }
+  }
 }
 </script>
 
@@ -43,5 +65,20 @@ export default {
     width: 14px;
     height: 14px;
   }
+}
+.share-wrap {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+.share-tips {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 260px;
+  height: 180px;
 }
 </style>

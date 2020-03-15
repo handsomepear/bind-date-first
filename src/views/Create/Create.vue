@@ -159,7 +159,7 @@ export default {
       }, // 工作地点
       mineWx: '',
       parentWx: '',
-      photos: [{ url: 'https://img.yzcdn.cn/vant/leaf.jpg' }],
+      photos: [],
       isShowSexSheet: false,
       isShowBirthDayPicker: false,
       isShowHomePicker: false,
@@ -201,7 +201,7 @@ export default {
     }
 
     const onSelectBirthDay = date => {
-      data.birthday = date.getFullYear() + '/' + (date.getMonth() + 1)
+      data.birthday = date.getFullYear()
       data.isShowBirthDayPicker = false
     }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="detail-page" v-if="postDetail">
-    <Title :name="postDetail.name + '的相亲详情'" />
+    <Title :name="postDetail.name + '的相亲详情'" color="#000" />
     <!-- 照片 -->
     <van-swipe class="photos" @change="onPhotoChange">
       <van-swipe-item v-for="(item, index) in postDetail.imgs" :key="index">
@@ -30,6 +30,14 @@
         </div>
       </div>
     </section>
+    <div v-if="isShowComplainBtn" class="complain-btn flex-column flex-center" @click="isShowComplainModal = true">
+      <img src="../../assets/imgs/tousu.png" alt="" />
+      <span>投诉</span>
+    </div>
+    <div class="home-btn flex-column flex-center" @click="onGoHome">
+      <img src="../../assets/imgs/home.png" alt="" />
+      <span>首页</span>
+    </div>
     <section class="page-bottom can-edite" v-if="canEdite">
       <!-- 可编辑 -->
       <div class="option flex-between-center">
@@ -41,7 +49,7 @@
     <!-- 底部 -->
     <section class="page-bottom" v-else>
       <!-- 不可编辑 -->
-      <div class="contact-way flex-between-center" v-if="!hasWx">
+      <div class="contact-way flex-between-center" v-if="postDetail.hasBuy">
         <div class="contact-button flex-center" v-clipboard:copy="parentWx" v-clipboard:success="parentCopySuccess">
           <span>家长微信：</span>
           <span>{{ postDetail.parentVx }}</span>
@@ -61,17 +69,9 @@
           <img src="../../assets/imgs/hongbao.png" alt="" />
           <span>关注公众号，领10元现金红包</span>
         </div>
-        <Share />
+        <Share @click.native="onShare" />
       </div>
     </section>
-    <div v-if="isShowComplainBtn" class="complain-btn flex-column flex-center" @click="isShowComplainModal = true">
-      <img src="../../assets/imgs/tousu.png" alt="" />
-      <span>投诉</span>
-    </div>
-    <div class="home-btn flex-column flex-center" @click="onGoHome">
-      <img src="../../assets/imgs/home.png" alt="" />
-      <span>首页</span>
-    </div>
     <!-- 支付弹窗 -->
     <van-overlay :show="isShowPayModal">
       <div class="pay-wrap flex-start-center flex-column" @click="isShowPayModal = false">
@@ -118,6 +118,7 @@ import { reactive, toRefs, onMounted } from '@vue/composition-api'
 import Title from '@/components/Title.vue'
 import Share from '@/components/Share.vue'
 import { getPostDetailApi } from '../../api/api'
+import toolkit from '../../utils/_toolkit'
 export default {
   components: {
     Share,
@@ -133,11 +134,11 @@ export default {
       isShowPayModal: false, // 是否展示支付弹窗
       isShowComplainModal: false, // 是否展示投诉弹窗
       isShowComplainBtn: true, // 是否展示投诉按钮
-      hasWx: false,
       parentWx: 'ZPS0326',
       mineWx: 'ZPS0000',
       canEdite: false,
-      postDetail: null
+      postDetail: null,
+      isShowShareTips: false
     })
     // 获取帖子详情
     const getPostDetail = () => {
@@ -145,12 +146,24 @@ export default {
         id: route.params.postId
       }).then(({ data: resData }) => {
         data.postDetail = resData.post
+        toolkit.wxShare('onMenuShareTimeline', {
+          title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
+          link: '//bbs.j.cn/#/detail/' + route.params.postId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          imgUrl: data.postDetail.imgs[0] // 分享图标
+        })
+        toolkit.wxShare('onMenuShareAppMessage', {
+          title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
+          desc: `年龄:${data.postDetail.age}, 家乡:${data.postDetail.province}, 职业:${data.postDetail.occupation}, 工作地点:${data.postDetail.workProvince}, 择偶标准:${data.postDetail.standard}`, // 分享描述
+          link: '//bbs.j.cn/#/detail/' + route.params.postId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          imgUrl: data.postDetail.imgs[0]
+        })
       })
     }
 
     onMounted(() => {
       getPostDetail()
     })
+
     const onPhotoChange = index => {
       data.current = index
     }
@@ -159,7 +172,7 @@ export default {
     }
 
     const onShowPayModal = () => {
-      if (!data.hasWx) {
+      if (!data.postDetail.hasBuy) {
         data.isShowPayModal = true
       }
     }
@@ -197,6 +210,10 @@ export default {
           // console.log('取消')
         })
     }
+
+    const onShare = () => {
+      data.isShowShareTips = true
+    }
     return {
       ...toRefs(data),
       onPhotoChange,
@@ -206,7 +223,8 @@ export default {
       parentCopySuccess,
       mineCopySuccess,
       onDelete,
-      onEdite
+      onEdite,
+      onShare
     }
   }
 }

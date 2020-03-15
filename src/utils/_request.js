@@ -8,7 +8,8 @@ function fetch(params) {
       toolkit.login(data => {
         window._TOKEN = data.token
         localStorage.setItem('token', data.token)
-        window.userInfo = { avatar: data.user.headUrl, nickName: data.user.nickName }
+        // window.userInfo = { avatar: data.user.headUrl, nickName: data.user.nickName }
+        window.userInfo = data.user
         request({
           url: params.url || '',
           data: { ...params.data }

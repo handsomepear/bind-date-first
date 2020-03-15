@@ -2,8 +2,10 @@
   <div class="mine-page">
     <Title name="地区筛选" color="#333" />
     <section class="mine-info flex-start-center">
-      <div class="avatar"></div>
-      <div class="nickname">Zps</div>
+      <div class="avatar">
+        <img :src="userInfo.headUrl" alt="" />
+      </div>
+      <div class="nickname">{{ userInfo.nickName }}</div>
     </section>
     <section class="created">
       <h2>我创建的</h2>
@@ -24,7 +26,6 @@
     </section>
     <section class="buyed">
       <h2>我购买的</h2>
-
       <div class="item-con " v-for="(item, index) in buyList" :key="item.id" @click="toDetailPage(item.id)">
         <div :class="['person-item', 'flex-between-center', index == 0 ? 'van-hairline--bottom' : 0]">
           <div class="info">
@@ -74,7 +75,7 @@ export default {
     })
 
     const toDetailPage = postId => {
-      router.push({ path: '/detail', query: { postId } })
+      router.push({ path: '/detail/' + postId })
     }
 
     return {
