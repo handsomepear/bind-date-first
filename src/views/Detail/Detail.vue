@@ -95,14 +95,14 @@
             <h2>投诉原因</h2>
             <!-- <van-field type="textarea" placeholder="请输入..." class="reason" /> -->
             <div class="text-con">
-              <textarea placeholder="请输入..."></textarea>
+              <textarea placeholder="请输入..." v-model="accuseReason"></textarea>
             </div>
             <h2>电话号码</h2>
             <div class="tel-con">
-              <input type="text" />
+              <input type="text" v-model="accuseTel" />
             </div>
             <div class="tips">注：请保持电话畅通，工作人员会尽快联系您。</div>
-            <div class="submit-btn flex-center">提交</div>
+            <div class="submit-btn flex-center" @click="onSubmitAccuse">提交</div>
           </div>
           <div class="close-btn" @click="isShowComplainModal = false">
             <van-icon name="cross" color="#C0C0C0" />
@@ -114,10 +114,10 @@
 </template>
 
 <script>
-import { reactive, toRefs, onMounted } from '@vue/composition-api'
+import { reactive, toRefs, onMounted, computed } from '@vue/composition-api'
 import Title from '@/components/Title.vue'
 import Share from '@/components/Share.vue'
-import { getPostDetailApi } from '../../api/api'
+import { getPostDetailApi, deleteApi, accuseApi, buyApi } from '../../api/api'
 import toolkit from '../../utils/_toolkit'
 export default {
   components: {
@@ -138,7 +138,9 @@ export default {
       mineWx: 'ZPS0000',
       canEdite: false,
       postDetail: null,
-      isShowShareTips: false
+      isShowShareTips: false,
+      accuseReason: '', // 投诉原因
+      accuseTel: '' // 投诉电话
     })
     // 获取帖子详情
     const getPostDetail = () => {
@@ -160,6 +162,8 @@ export default {
       })
     }
 
+    computed(() => {})
+
     onMounted(() => {
       getPostDetail()
     })
@@ -178,6 +182,21 @@ export default {
     }
     const onPay = () => {
       // 支付
+      buyApi({
+        id: route.params.postId
+      }).then(({ data: resData }) => {
+        toolkit.wxPay({
+          timestamp: resData.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+          nonceStr: resData.nonceStr, // 支付签名随机串，不长于 32 位
+          package: 'prepay_id=' + resData.prepayId, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
+          signType: 'MD5', // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+          paySign: resData.paySign, // 支付签名
+          success: function() {
+            // 显示微信号
+            data.postDetail.hasBuy = true
+          }
+        })
+      })
     }
 
     const parentCopySuccess = () => {
@@ -204,11 +223,37 @@ export default {
         cancel: () => {}
       })
         .then(() => {
-          // console.log('确认删除')
+          deleteApi({
+            id: route.params.postId
+          }).then(res => {
+            console.log(res)
+          })
         })
         .catch(() => {
           // console.log('取消')
         })
+    }
+
+    // 投诉
+    const onSubmitAccuse = () => {
+      if (!data.accuseReason) {
+        return Toast('请输入投诉原因')
+      }
+      if (!data.accuseTel) {
+        return Toast('请输入手机号')
+      }
+
+      if (!/^1\d{10}$/.test(data.accuseTel.replace(/\s/g, ''))) {
+        return Toast('请输入正确格式的手机号')
+      }
+      accuseApi({
+        postId: route.params.postId,
+        reason: data.accuseReason,
+        tel: data.accuseTel
+      }).then(() => {
+        data.isShowComplainModal = false
+        Toast('投诉成功')
+      })
     }
 
     const onShare = () => {
@@ -224,7 +269,8 @@ export default {
       mineCopySuccess,
       onDelete,
       onEdite,
-      onShare
+      onShare,
+      onSubmitAccuse
     }
   }
 }

@@ -74,8 +74,6 @@ const toolkit = {
   },
   wxShare(target, params) {
     // 解决微信二次分享的问题
-    console.log(params)
-    wx[target](params)
     wx.ready(() => {
       wx[target](params)
     })

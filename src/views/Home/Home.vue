@@ -47,7 +47,7 @@
         </section>
       </van-list>
       <van-list
-        v-show="tabSex === 1"
+        v-show="tabSex === 1 && male.postList.length"
         v-model="male.loading"
         :finished="male.finished"
         finished-text="没有更多了"
@@ -190,7 +190,6 @@ export default {
     })
 
     const getPostList = () => {
-      // console.log('load')
       data.loading = true
       getPostListApi({
         pageSize: 5,
@@ -226,8 +225,7 @@ export default {
         })
     }
 
-    onMounted(() => {
-      toolkit.wxConfig()
+    const getLocationAndList = () => {
       toolkit.getLocationFromBidu(position => {
         var address = position.addressComponents
         // streetNumber: "3号"
@@ -242,6 +240,24 @@ export default {
         }
         getPostList()
       })
+    }
+
+    onMounted(() => {
+      toolkit.wxConfig()
+      const userInfo = window.userInfo || sessionStorage.getItem(userInfo)
+      if (userInfo) {
+        getLocationAndList()
+      } else {
+        toolkit.login(resData => {
+          window._TOKEN = resData.token
+          localStorage.setItem('token', resData.token)
+          const userSex = resData.user.sex
+          if (userSex === 1) data.tabSex = 2
+          if (userSex === 2) data.tabSex = 1
+          if (userSex === 0) data.tabSex = 1
+          getLocationAndList()
+        })
+      }
     })
 
     const filterLocation = location => {

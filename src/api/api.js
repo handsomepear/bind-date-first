@@ -22,6 +22,27 @@ export const cretePostApi = data => {
   })
 }
 
+export const deleteApi = data => {
+  return fetch({
+    url: '/post/delete',
+    data
+  })
+}
+
+export const buyApi = data => {
+  return fetch({
+    url: '/post/buy',
+    data
+  })
+}
+
+export const accuseApi = data => {
+  return fetch({
+    url: '/post/accuse',
+    data
+  })
+}
+
 export const getPostDetailApi = data => {
   return fetch({
     url: '/post/detail',
