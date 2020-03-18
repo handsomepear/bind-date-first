@@ -43,7 +43,7 @@
       <div class="option flex-between-center">
         <div class="edite-btn flex-center" @click="onEdite">编辑</div>
         <div class="delete-btn flex-center" @click="onDelete">删除</div>
-        <Share class="large" />
+        <Share size="large" @click.native="onShare" />
       </div>
     </section>
     <!-- 底部 -->
@@ -114,7 +114,7 @@
 </template>
 
 <script>
-import { reactive, toRefs, onMounted, computed } from '@vue/composition-api'
+import { reactive, toRefs, onMounted } from '@vue/composition-api'
 import Title from '@/components/Title.vue'
 import Share from '@/components/Share.vue'
 import { getPostDetailApi, deleteApi, accuseApi, buyApi } from '../../api/api'
@@ -134,9 +134,9 @@ export default {
       isShowPayModal: false, // 是否展示支付弹窗
       isShowComplainModal: false, // 是否展示投诉弹窗
       isShowComplainBtn: true, // 是否展示投诉按钮
-      parentWx: 'ZPS0326',
-      mineWx: 'ZPS0000',
-      canEdite: false,
+      parentWx: '',
+      mineWx: '',
+      canEdite: route.params.canEdite === '0' ? false : true,
       postDetail: null,
       isShowShareTips: false,
       accuseReason: '', // 投诉原因
@@ -162,8 +162,6 @@ export default {
       })
     }
 
-    computed(() => {})
-
     onMounted(() => {
       getPostDetail()
     })
@@ -183,7 +181,7 @@ export default {
     const onPay = () => {
       // 支付
       buyApi({
-        id: route.params.postId
+        postId: route.params.postId
       }).then(({ data: resData }) => {
         toolkit.wxPay({
           timestamp: resData.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
@@ -210,9 +208,6 @@ export default {
     // 编辑帖子
     const onEdite = () => {
       const formData = JSON.stringify(data)
-      // if(formData.postId !== postId) {
-
-      // }
       router.push({ name: 'Create', params: { formData } })
     }
 
@@ -224,9 +219,9 @@ export default {
       })
         .then(() => {
           deleteApi({
-            id: route.params.postId
-          }).then(res => {
-            console.log(res)
+            postId: route.params.postId
+          }).then(() => {
+            router.replace({ path: '/mine' })
           })
         })
         .catch(() => {
@@ -247,7 +242,7 @@ export default {
         return Toast('请输入正确格式的手机号')
       }
       accuseApi({
-        postId: route.params.postId,
+        postId: Number(route.params.postId),
         reason: data.accuseReason,
         tel: data.accuseTel
       }).then(() => {

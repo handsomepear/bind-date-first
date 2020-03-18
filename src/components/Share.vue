@@ -1,7 +1,7 @@
 <template>
   <!-- 分享 -->
   <div class="share-com">
-    <div class="share-button" @click="onShowShareTips">
+    <div :class="['share-button', size]" @click="onShowShareTips">
       <div class="share-img">
         <img src="../assets/imgs/share.png" alt="" />
       </div>
@@ -17,7 +17,11 @@
 <script>
 import { ref } from '@vue/composition-api'
 export default {
-  setup() {
+  props: {
+    size: String
+  },
+  setup(props) {
+    const size = props.size || ''
     const isShowShareTips = ref(false)
     const onShowShareTips = () => {
       isShowShareTips.value = true
@@ -28,6 +32,7 @@ export default {
     }
 
     return {
+      size,
       isShowShareTips,
       onShowShareTips,
       onHideShareTips

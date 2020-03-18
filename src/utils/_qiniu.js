@@ -1,11 +1,10 @@
 import * as qiniu from 'qiniu-js'
 import axios from 'axios'
 
-export default function fileUpload(vm, file, cb) {
-  vm.$loading.show()
+export default function fileUpload(file, cb) {
   axios({
     method: 'post',
-    url: '/api/getUploadInfo',
+    url: '/getUploadInfo',
     data: {
       keys: '',
       mimeType: 'image',
@@ -26,20 +25,13 @@ export default function fileUpload(vm, file, cb) {
       }
       let observer = {
         next() {},
-        error() {
-          vm.$loading.hide()
-          vm.$toast('上传失败请重试')
-        },
+        error() {},
         complete() {
-          vm.$loading.hide()
           cb(finalUrl)
         }
       }
       let observable = qiniu.upload(file, key, token, putExtra, config)
       observable.subscribe(observer)
     })
-    .catch(() => {
-      vm.$loading.hide()
-      vm.$toast('上传失败请重试')
-    })
+    .catch(() => {})
 }

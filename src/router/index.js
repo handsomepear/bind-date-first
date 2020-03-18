@@ -8,21 +8,25 @@ const routes = [
   {
     path: '/',
     name: 'Home',
+    meta: { keepAlive: true },
     component: () => import(/* webpackChunkName: "Home" */ '../views/Home/Home.vue')
   },
   {
-    path: '/detail/:postId',
+    path: '/detail/:postId/:canEdite',
     name: 'Detail',
+    meta: { keepAlive: false },
     component: () => import(/* webpackChunkName: "Detail" */ '../views/Detail/Detail.vue')
   },
   {
     path: '/mine',
     name: 'Mine',
+    meta: { keepAlive: false },
     component: () => import(/* webpackChunkName: "Mine" */ '../views/Mine/Mine.vue')
   },
   {
     path: '/create',
     name: 'Create',
+    meta: { keepAlive: false },
     component: () => import(/* webpackChunkName: "Create" */ '../views/Create/Create.vue')
   }
 ]

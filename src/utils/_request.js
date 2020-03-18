@@ -8,7 +8,7 @@ function fetch(params) {
       toolkit.login(data => {
         window._TOKEN = data.token
         localStorage.setItem('token', data.token)
-        window.userInfo = data.user
+        localStorage.setItem('userInfo', JSON.stringify(data.user))
         request({
           url: params.url || '',
           data: { ...params.data }

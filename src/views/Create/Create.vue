@@ -66,7 +66,13 @@
         <div class="label">图片：</div>
         <van-field name="photos">
           <template #input>
-            <van-uploader multiple :max-count="9" v-model="photos" :before-read="onBeforerUpload" />
+            <van-uploader
+              multiple
+              :max-count="9"
+              v-model="photos"
+              :before-read="onBeforerUpload"
+              :after-read="onAfterUpload"
+            />
           </template>
         </van-field>
         <div class="tips">最多9张，只支持jpg格式</div>
@@ -126,6 +132,7 @@ import { reactive, toRefs, onMounted } from '@vue/composition-api'
 import areaList from '../../assets/data/area'
 import Title from '@/components/Title'
 import { cretePostApi } from '../../api/api'
+import fileUpload from '../../utils/_qiniu'
 export default {
   components: {
     Title
@@ -168,6 +175,7 @@ export default {
     })
 
     const initData = postDetail => {
+      console.log(postDetail)
       data.name = postDetail.name
       data.birthday = postDetail.birth
       data.homeTown = {
@@ -175,15 +183,18 @@ export default {
         province: postDetail.province,
         city: postDetail.city
       }
+      data.sex = { name: ['', '男', '女'][postDetail.sex] }
       data.job = postDetail.occupation
       data.workplace = {
         name: postDetail.workProvince + '-' + postDetail.workCity,
         province: postDetail.workProvince,
         city: postDetail.workProvince
       }
-      data.education = data.educational
+      data.education = postDetail.educational
       data.mineWx = postDetail.vx
       data.parentWx = postDetail.parentVx
+      data.photos = postDetail.imgs.map(item => ({ url: item }))
+      data.standard = postDetail.standard
     }
 
     // 生命周期
@@ -238,6 +249,12 @@ export default {
       return true
     }
 
+    const onAfterUpload = ({ file }) => {
+      fileUpload(file, function(res) {
+        data.photos[data.photos.length - 1].url = res
+      })
+    }
+
     // 提交表单的时候上传图片到服务器
     const onSubmit = values => {
       if (!values.name) {
@@ -281,7 +298,7 @@ export default {
           imgs: data.photos.map(item => item.url)
         }
       }).then(({ data: resData }) => {
-        router.replace({ path: '/detail/' + resData.id })
+        router.replace({ path: '/detail/' + resData.id + '/0' })
       })
     }
 
@@ -294,7 +311,8 @@ export default {
       onSelectHome,
       onSelectWorkplace,
       onSelectEducation,
-      onBeforerUpload
+      onBeforerUpload,
+      onAfterUpload
     }
   }
 }

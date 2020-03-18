@@ -75,7 +75,7 @@ export default {
     })
 
     const toDetailPage = postId => {
-      router.push({ path: '/detail/' + postId })
+      router.push({ path: '/detail/' + postId + '/1' })
     }
 
     return {

@@ -38,6 +38,7 @@
             <div class="photo-box" v-for="(photoItem, photoIndex) in item.imgs.slice(0, 6)" :key="photoIndex">
               <img :src="photoItem" alt="" />
             </div>
+            <div class="photo-box last"></div>
           </div>
           <!-- bottom -->
           <div class="item-bottom flex-box flex-between-center">
@@ -82,6 +83,8 @@
             <div class="photo-box" v-for="(photoItem, photoIndex) in item.imgs.slice(0, 6)" :key="photoIndex">
               <img :src="photoItem" alt="" />
             </div>
+            <!-- 占位：避免 space-between 导致图片不连续排列 -->
+            <div class="photo-box last"></div>
           </div>
           <!-- bottom -->
           <div class="item-bottom flex-box flex-between-center">
@@ -95,7 +98,7 @@
     <!-- 这是由于head 设置了 z-index 为 1 高于了 Share 组件, 那么在 Share 组件内部的 wrap 也就无法盖住 head 了 -->
     <section class="head">
       <div class="top">
-        <div class="area-type" @click="isShowType = true">{{ type }} <van-icon name="arrow-down" /></div>
+        <div class="area-type" @click="isShowType = true">{{ type.name }} <van-icon name="arrow-down" /></div>
         <div class="area-type" @click="isShowAreaPanel = true">
           {{ filterLocation(location.name) }}<van-icon name="arrow-down" />
         </div>
@@ -129,7 +132,7 @@
     <van-popup v-model="isShowAreaPanel" position="bottom">
       <van-area
         :area-list="areaList"
-        :title="type + '选择'"
+        :title="type.name + '选择'"
         :value="locationCode"
         columns-num="2"
         @confirm="onChooseArea"
@@ -140,7 +143,7 @@
 </template>
 
 <script>
-import { onMounted, reactive, toRefs } from '@vue/composition-api'
+import { onMounted, reactive, toRefs, watch } from '@vue/composition-api'
 import areaList from '@/assets/data/area.js'
 import Share from '@/components/Share.vue'
 import { getPostListApi } from '../../api/api'
@@ -153,7 +156,10 @@ export default {
     const router = context.root.$router
     const data = reactive({
       // 地域类型
-      type: '家乡',
+      type: {
+        name: '家乡',
+        value: 1
+      },
       location: {
         name: '',
         province: '',
@@ -161,6 +167,7 @@ export default {
       },
       isShowType: false,
       isShowAreaPanel: false,
+      userSex: 0, // 0 未知 1 男 2 女
       tabSex: 2, // 1：男 2：女
       male: {
         loading: false,
@@ -180,14 +187,19 @@ export default {
       typeOptions: [
         {
           name: '家乡',
-          value: 0
+          value: 1
         },
         {
           name: '工作地点',
-          value: 1
+          value: 2
         }
       ]
     })
+
+    // 截取掉 '省' '市' 两个字
+    const locationSlice = name => {
+      return name.slice(0, name.length - 1)
+    }
 
     const getPostList = () => {
       data.loading = true
@@ -196,7 +208,8 @@ export default {
         pageRecord: data.tabSex === 2 ? data.female.nextPage : data.male.nextPage,
         province: data.location.province,
         city: data.location.city,
-        sex: data.tabSex
+        sex: data.tabSex,
+        locType: data.type.value
       })
         .then(({ data: resData }) => {
           const sex = data.tabSex === 2 ? 'female' : 'male'
@@ -210,13 +223,15 @@ export default {
           toolkit.wxShare('onMenuShareTimeline', {
             title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
             link: '//bbs.j.cn/', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-            imgUrl: shareItem.imgs[0] // 分享图标
+            imgUrl: shareItem && shareItem.imgs[0] // 分享图标
           })
           toolkit.wxShare('onMenuShareAppMessage', {
             title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
-            desc: `年龄:${shareItem.age}, 家乡:${shareItem.province}, 职业:${shareItem.occupation}, 工作地点:${shareItem.workProvince}, 择偶标准:${shareItem.standard}`, // 分享描述
+            desc:
+              shareItem &&
+              `年龄:${shareItem.age}, 家乡:${shareItem.province}, 职业:${shareItem.occupation}, 工作地点:${shareItem.workProvince}, 择偶标准:${shareItem.standard}`, // 分享描述
             link: '//bbs.j.cn/', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-            imgUrl: shareItem.imgs[0]
+            imgUrl: shareItem && shareItem.imgs[0]
           })
         })
         .catch(err => {
@@ -224,34 +239,49 @@ export default {
           console.log(err)
         })
     }
+    watch(
+      [() => data.type.value, () => data.location.name],
+      () => {
+        getPostList()
+      },
+      { lazy: true }
+    )
 
     const getLocationAndList = () => {
       toolkit.getLocationFromBidu(position => {
-        var address = position.addressComponents
+        const address = position.addressComponents
+        const province = locationSlice(address.province)
+        const city = locationSlice(address.city)
         // streetNumber: "3号"
         // street: "中关村北一条"
         // district: "海淀区"
         // city: "北京市"
         // province: "北京市"
+
         data.location = {
-          name: `${address.province}-${address.city}`,
-          province: address.province || '北京',
-          city: address.city || '北京'
+          name: `${province}-${city}`,
+          province: province || '北京',
+          city: city || '北京'
         }
-        getPostList()
+        // getPostList(userSex)
       })
     }
 
     onMounted(() => {
       toolkit.wxConfig()
-      const userInfo = window.userInfo || sessionStorage.getItem(userInfo)
+      const userInfo = window.userInfo || JSON.parse(localStorage.getItem('userInfo'))
       if (userInfo) {
+        const userSex = userInfo.sex
+        if (userSex === 1) data.tabSex = 2
+        if (userSex === 2) data.tabSex = 1
+        if (userSex === 0) data.tabSex = 1
         getLocationAndList()
       } else {
         toolkit.login(resData => {
           window._TOKEN = resData.token
           localStorage.setItem('token', resData.token)
-          const userSex = resData.user.sex
+          localStorage.setItem('userInfo', JSON.stringify(resData.user))
+          const userSex = userInfo.sex
           if (userSex === 1) data.tabSex = 2
           if (userSex === 2) data.tabSex = 1
           if (userSex === 0) data.tabSex = 1
@@ -261,22 +291,30 @@ export default {
     })
 
     const filterLocation = location => {
-      const locationList = ['北京市-北京市', '天津市-天津市', '上海市-上海市', '重庆市-重庆市']
+      const locationList = ['北京-北京', '天津-天津', '上海-上海', '重庆-重庆']
       const index = locationList.indexOf(location)
-      return index > -1 ? locationList[index].slice(0, 2) : location
+      return index > -1 ? locationList[index].split('-')[0] : location
     }
 
     // 类型选择
     const onSelectType = item => {
-      data.type = item.name
+      data.type = item
       data.isShowType = false
     }
+
+    // const strSlice = () => {}
     // 地区选择
     const onChooseArea = area => {
-      data.location.name = area.reduce((prev, next) => {
-        return next ? prev.name + '-' + next.name : prev.name + '-' + prev.name
-      })
       data.locationCode = area[1] ? area[1].code : area[0].code
+      data.location = {
+        name: area.reduce((prev, next) => {
+          const province = locationSlice(prev.name)
+          const city = locationSlice(next.name)
+          return next ? province + '-' + city : province + '-' + province
+        }),
+        province: locationSlice(area[0].name),
+        city: locationSlice(area[1].name)
+      }
       data.isShowAreaPanel = false
     }
     // Tab选择
@@ -287,7 +325,7 @@ export default {
       }
     }
     const onViewDetail = postId => {
-      router.push({ path: '/detail/' + postId })
+      router.push({ path: '/detail/' + postId + '/0' })
     }
     const toCreatePage = () => {
       router.push({ path: '/create' })
