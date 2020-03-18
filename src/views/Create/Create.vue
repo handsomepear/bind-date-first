@@ -205,6 +205,11 @@ export default {
       }
     })
 
+    // 截取掉 '省' '市' 两个字
+    const locationSlice = name => {
+      return name.slice(0, name.length - 1)
+    }
+
     const onSelectSex = sex => {
       data.sex = sex
       data.isShowSexSheet = false
@@ -216,21 +221,25 @@ export default {
     }
 
     const onSelectHome = home => {
+      const province = locationSlice(home[0].name)
+      const city = locationSlice(home[1].name)
       data.homeTown = {
         name: home.map(item => item.name).join('-'),
         code: home[home.length - 1].code,
-        province: home[0].name,
-        city: home[1].name
+        province,
+        city
       }
       data.isShowHomePicker = false
     }
 
     const onSelectWorkplace = workplace => {
+      const province = locationSlice(workplace[0].name)
+      const city = locationSlice(workplace[1].name)
       data.workplace = {
         name: workplace.map(item => item.name).join('-'),
         code: workplace[workplace.length - 1].code,
-        province: workplace[0].name,
-        city: workplace[1].name
+        province,
+        city
       }
       data.isShowWorkplacePicker = false
     }
