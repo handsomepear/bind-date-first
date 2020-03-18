@@ -1,7 +1,7 @@
 import axios from 'axios'
-
+import ENV from './_ENV'
 const service = axios.create({
-  baseURL: '',
+  baseURL: ENV.baseURL,
   timeout: 15000
 })
 

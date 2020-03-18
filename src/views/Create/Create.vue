@@ -175,7 +175,6 @@ export default {
     })
 
     const initData = postDetail => {
-      console.log(postDetail)
       data.name = postDetail.name
       data.birthday = postDetail.birth
       data.homeTown = {
@@ -277,6 +276,12 @@ export default {
       }
       if (!values.mineWx) {
         return Toast('请填写本人微信')
+      }
+      if (!values.mineWx) {
+        return Toast('请填写本人微信')
+      }
+      if (!values.photos.length) {
+        return Toast('请上传照片')
       }
       if (!values.standard) {
         return Toast('请填写择偶标准')

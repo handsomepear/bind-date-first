@@ -1,10 +1,10 @@
 import * as qiniu from 'qiniu-js'
 import axios from 'axios'
-
+import ENV from './_ENV'
 export default function fileUpload(file, cb) {
   axios({
     method: 'post',
-    url: '/getUploadInfo',
+    url: ENV.baseURL + '/getUploadInfo',
     data: {
       keys: '',
       mimeType: 'image',

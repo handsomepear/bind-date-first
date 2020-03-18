@@ -48,7 +48,7 @@
         </section>
       </van-list>
       <van-list
-        v-show="tabSex === 1 && male.postList.length"
+        v-show="tabSex === 1"
         v-model="male.loading"
         :finished="male.finished"
         finished-text="没有更多了"
@@ -202,7 +202,8 @@ export default {
     }
 
     const getPostList = () => {
-      data.loading = true
+      const sex = data.tabSex === 2 ? 'female' : 'male'
+      data[sex].loading = true
       getPostListApi({
         pageSize: 5,
         pageRecord: data.tabSex === 2 ? data.female.nextPage : data.male.nextPage,
@@ -212,7 +213,6 @@ export default {
         locType: data.type.value
       })
         .then(({ data: resData }) => {
-          const sex = data.tabSex === 2 ? 'female' : 'male'
           data[sex].postList = data[sex].postList.concat(resData.list)
           data[sex].nextPage = resData.nextPageRecord // 获取下一页的数据的参数
           data[sex].loading = false
@@ -222,7 +222,7 @@ export default {
           const shareItem = data[sex].postList[0]
           toolkit.wxShare('onMenuShareTimeline', {
             title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
-            link: '//bbs.j.cn/', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            link: '//www.geinigejuzichi.top/', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: shareItem && shareItem.imgs[0] // 分享图标
           })
           toolkit.wxShare('onMenuShareAppMessage', {
@@ -230,7 +230,7 @@ export default {
             desc:
               shareItem &&
               `年龄:${shareItem.age}, 家乡:${shareItem.province}, 职业:${shareItem.occupation}, 工作地点:${shareItem.workProvince}, 择偶标准:${shareItem.standard}`, // 分享描述
-            link: '//bbs.j.cn/', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            link: '//www.geinigejuzichi.top/', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: shareItem && shareItem.imgs[0]
           })
         })
@@ -257,13 +257,11 @@ export default {
         // district: "海淀区"
         // city: "北京市"
         // province: "北京市"
-
         data.location = {
           name: `${province}-${city}`,
           province: province || '北京',
           city: city || '北京'
         }
-        // getPostList(userSex)
       })
     }
 
@@ -281,7 +279,7 @@ export default {
           window._TOKEN = resData.token
           localStorage.setItem('token', resData.token)
           localStorage.setItem('userInfo', JSON.stringify(resData.user))
-          const userSex = userInfo.sex
+          const userSex = resData.user.sex
           if (userSex === 1) data.tabSex = 2
           if (userSex === 2) data.tabSex = 1
           if (userSex === 0) data.tabSex = 1
@@ -302,7 +300,6 @@ export default {
       data.isShowType = false
     }
 
-    // const strSlice = () => {}
     // 地区选择
     const onChooseArea = area => {
       data.locationCode = area[1] ? area[1].code : area[0].code
