@@ -9,7 +9,9 @@
     </div>
     <div class="share-wrap" v-show="isShowShareTips" @click="onHideShareTips">
       <!-- <van-button @click="onHideShareTips">关闭</van-button> -->
-      <img class="share-tips" src="../assets/imgs/share-tips.png" alt="" />
+      <!-- <img class="share-tips" src="../assets/imgs/share-tips.png" alt="" /> -->
+      <div class="arrow___3Kx7L"></div>
+      <div class="hint___M89Cy">点击右上角更多<br />分享给好友或到朋友圈</div>
     </div>
   </div>
 </template>
@@ -79,11 +81,21 @@ export default {
   left: 0;
   background-color: rgba(0, 0, 0, 0.8);
 }
-.share-tips {
+.arrow___3Kx7L {
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 260px;
-  height: 180px;
+  top: 10px;
+  right: 10px;
+  width: 103px;
+  height: 111px;
+  background: url('../assets/imgs/icon-pilot.png') no-repeat center;
+  background-size: cover;
+}
+.hint___M89Cy {
+  position: absolute;
+  top: 110px;
+  right: 74px;
+  color: #fff;
+  font-weight: 500;
+  font-size: 16px;
 }
 </style>

@@ -1,0 +1,103 @@
+<template>
+  <div class="uploader-com">
+    <div class="img-preview" v-for="(item, index) in photos" :key="item">
+      <div class="img-con">
+        <img :src="item" alt="" />
+      </div>
+      <van-icon name="clear" @click.native="deletePhoto(index)" />
+    </div>
+    <div v-if="photos.length < max" class="upload-btn" @click.stop="upload">
+      <van-icon name="photograph" />
+    </div>
+  </div>
+</template>
+
+<script>
+import wx from 'wx'
+import fileUpload from '../utils/_qiniu'
+export default {
+  props: {
+    getPhotos: Function,
+    photos: {
+      type: Array,
+      default: () => []
+    },
+    max: {
+      type: Number,
+      default: 9
+    }
+  },
+  methods: {
+    upload() {
+      const _this = this
+      wx.chooseImage({
+        count: 1, // 默认9
+        sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album'], // 可以指定来源是相册还是相机，默认二者都有
+        success: function(res) {
+          _this.$loading.show()
+          var localIds = res.localIds // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+          localIds.forEach(localId => {
+            wx.getLocalImgData({
+              localId,
+              success(res) {
+                fileUpload(res.localData.split(',')[1], function(img) {
+                  let photos = _this.photos.slice(0)
+                  photos.push(img)
+                  _this.$emit('getPhotos', photos)
+                  _this.$loading.hide()
+                })
+              }
+            })
+          })
+        }
+      })
+    },
+    deletePhoto(index) {
+      let photos = this.photos.slice(0)
+      photos.splice(index, 1)
+      this.$emit('getPhotos', photos)
+    }
+  }
+}
+</script>
+
+<style lang="less" scoped>
+.uploader-com {
+  display: flex;
+  flex-wrap: wrap;
+}
+.img-preview {
+  position: relative;
+  margin: 0 8px 8px 0;
+  .img-con {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  img {
+    width: 100%;
+    height: 100%;
+  }
+  .van-icon {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+  }
+}
+.upload-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  margin: 0 8px 8px 0;
+  border-radius: 8px;
+  background-color: #f7f8fa;
+  .van-icon {
+    color: #dcdee0;
+    font-size: 24px;
+  }
+}
+</style>

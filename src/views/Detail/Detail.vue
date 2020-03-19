@@ -87,29 +87,31 @@
       </div>
     </van-overlay>
     <!-- 投诉弹窗 -->
-    <van-overlay :show="isShowComplainModal">
-      <div class="complain-wrap flex-center" @click="isShowComplainModal = false">
-        <div class="complain-modal" @click.stop>
-          <div class="title">投诉</div>
-          <div class="complain-form">
-            <h2>投诉原因</h2>
-            <!-- <van-field type="textarea" placeholder="请输入..." class="reason" /> -->
-            <div class="text-con">
-              <textarea placeholder="请输入..." v-model="accuseReason"></textarea>
+    <section v-if="isShowComplainModal">
+      <van-overlay :show="isShowComplainModal">
+        <div class="complain-wrap flex-center" @click="isShowComplainModal = false">
+          <div class="complain-modal" @click.stop>
+            <div class="title">投诉</div>
+            <div class="complain-form">
+              <h2>投诉原因</h2>
+              <!-- <van-field type="textarea" placeholder="请输入..." class="reason" /> -->
+              <div class="text-con">
+                <textarea placeholder="请输入..." v-model="accuseReason"></textarea>
+              </div>
+              <h2>电话号码</h2>
+              <div class="tel-con">
+                <input type="text" v-model="accuseTel" />
+              </div>
+              <div class="tips">注：请保持电话畅通，工作人员会尽快联系您。</div>
+              <div class="submit-btn flex-center" @click="onSubmitAccuse">提交</div>
             </div>
-            <h2>电话号码</h2>
-            <div class="tel-con">
-              <input type="text" v-model="accuseTel" />
+            <div class="close-btn" @click="isShowComplainModal = false">
+              <van-icon name="cross" color="#C0C0C0" />
             </div>
-            <div class="tips">注：请保持电话畅通，工作人员会尽快联系您。</div>
-            <div class="submit-btn flex-center" @click="onSubmitAccuse">提交</div>
-          </div>
-          <div class="close-btn" @click="isShowComplainModal = false">
-            <van-icon name="cross" color="#C0C0C0" />
           </div>
         </div>
-      </div>
-    </van-overlay>
+      </van-overlay>
+    </section>
   </div>
 </template>
 
@@ -133,10 +135,10 @@ export default {
       current: 0,
       isShowPayModal: false, // 是否展示支付弹窗
       isShowComplainModal: false, // 是否展示投诉弹窗
-      isShowComplainBtn: true, // 是否展示投诉按钮
+      isShowComplainBtn: route.params.complain ? true : false, // 是否展示投诉按钮
       parentWx: '',
       mineWx: '',
-      canEdite: route.params.canEdite === '0' ? false : true,
+      canEdite: route.params.edite ? true : false,
       postDetail: null,
       isShowShareTips: false,
       accuseReason: '', // 投诉原因
@@ -150,13 +152,13 @@ export default {
         data.postDetail = resData.post
         toolkit.wxShare('onMenuShareTimeline', {
           title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
-          link: '//www.geinigejuzichi.top/#/detail/' + route.params.postId + '/0', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          link: '//www.geinigejuzichi.top/#/detail/' + route.params.postId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
           imgUrl: data.postDetail.imgs[0] // 分享图标
         })
         toolkit.wxShare('onMenuShareAppMessage', {
           title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
           desc: `年龄:${data.postDetail.age}, 家乡:${data.postDetail.province}, 职业:${data.postDetail.occupation}, 工作地点:${data.postDetail.workProvince}, 择偶标准:${data.postDetail.standard}`, // 分享描述
-          link: '//www.geinigejuzichi.top/#/detail/' + route.params.postId + '/0', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          link: '//www.geinigejuzichi.top/#/detail/' + route.params.postId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
           imgUrl: data.postDetail.imgs[0]
         })
       })
@@ -185,7 +187,7 @@ export default {
         postId: route.params.postId
       }).then(({ data: resData }) => {
         toolkit.wxPay({
-          timestamp: resData.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+          timestamp: resData.timeStamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
           nonceStr: resData.nonceStr, // 支付签名随机串，不长于 32 位
           package: 'prepay_id=' + resData.prepayId, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
           signType: 'MD5', // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'

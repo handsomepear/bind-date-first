@@ -12,9 +12,12 @@ import 'lib-flexible'
 import '@/assets/css/common.less'
 import vant from 'vant'
 
+import loading from './plugins/loading'
+
 Vue.use(vant)
 Vue.use(VueCompositionApi)
 Vue.use(Clipboard)
+Vue.use(loading)
 
 Vue.config.productionTip = false
 

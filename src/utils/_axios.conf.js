@@ -25,6 +25,11 @@ service.interceptors.response.use(
       if (response.data.errCode === 0) {
         return Promise.resolve(response)
       }
+      if (response.data.errCode === -1) {
+        // 未登录
+        localStorage.removeItem('token')
+        window.location.reload()
+      }
       return Promise.reject(response)
     }
   },

@@ -68,7 +68,14 @@ const toolkit = {
         timestamp: data.data.timestamp, // 必填，生成签名的时间戳
         nonceStr: data.data.nonceStr, // 必填，生成签名的随机串
         signature: data.data.signature, // 必填，签名
-        jsApiList: ['onMenuShareAppMessage', 'onMenuShareTimeline', 'getLocation', 'chooseWXPay'] // 必填，需要使用的JS接口列表
+        jsApiList: [
+          'onMenuShareAppMessage',
+          'onMenuShareTimeline',
+          'getLocation',
+          'chooseWXPay',
+          'chooseImage',
+          'uploadImage'
+        ] // 必填，需要使用的JS接口列表
       })
     })
   },

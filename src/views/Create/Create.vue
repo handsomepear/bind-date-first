@@ -64,18 +64,8 @@
       <van-field v-model="parentWx" name="parentWx" label="家长微信:" placeholder="请输入" input-align="right" />
       <section class="upload-con">
         <div class="label">图片：</div>
-        <van-field name="photos">
-          <template #input>
-            <van-uploader
-              multiple
-              :max-count="9"
-              v-model="photos"
-              :before-read="onBeforerUpload"
-              :after-read="onAfterUpload"
-            />
-          </template>
-        </van-field>
-        <div class="tips">最多9张，只支持jpg格式</div>
+        <WxUploader :photos="photos" @getPhotos="getPhotos" />
+        <div class="tips">最多9张</div>
       </section>
       <section class="standard">
         <div class="label">择偶标准：</div>
@@ -103,22 +93,37 @@
         type="year-month"
         :min-date="minDate"
         :max-date="maxDate"
+        v-model="defaultBirth"
+        title="生日选择"
         @confirm="onSelectBirthDay"
         @cancel="isShowBirthDayPicker = false"
       />
     </van-popup>
     <!-- 家乡选择 -->
     <van-popup v-model="isShowHomePicker" position="bottom">
-      <van-area :area-list="areaList" columns-num="2" @confirm="onSelectHome" @cancel="showArea = false" />
+      <van-area
+        :area-list="areaList"
+        title="家乡选择"
+        columns-num="2"
+        @confirm="onSelectHome"
+        @cancel="showArea = false"
+      />
     </van-popup>
     <!-- 工作地点选择 -->
     <van-popup v-model="isShowWorkplacePicker" position="bottom">
-      <van-area :area-list="areaList" columns-num="2" @confirm="onSelectWorkplace" @cancel="showArea = false" />
+      <van-area
+        :area-list="areaList"
+        title="工作地点选择"
+        columns-num="2"
+        @confirm="onSelectWorkplace"
+        @cancel="showArea = false"
+      />
     </van-popup>
     <!-- 学历选择 -->
     <van-popup v-model="isShowEducationPicker" position="bottom">
       <van-picker
         show-toolbar
+        title="学历选择"
         :columns="educationList"
         @cancel="isShowEducationPicker = false"
         @confirm="onSelectEducation"
@@ -131,22 +136,26 @@
 import { reactive, toRefs, onMounted } from '@vue/composition-api'
 import areaList from '../../assets/data/area'
 import Title from '@/components/Title'
+import WxUploader from '@/components/WxUploader'
 import { cretePostApi } from '../../api/api'
-import fileUpload from '../../utils/_qiniu'
+import toolkit from '../../utils/_toolkit'
 export default {
   components: {
-    Title
+    Title,
+    WxUploader
   },
   setup(props, context) {
     const router = context.root.$router
     const route = context.root.$route
     const Toast = context.root.$toast
+    const $loading = context.root.$loading
     const data = reactive({
       standard: '', // 择偶标准
       sexOptions: [{ name: '男' }, { name: '女' }],
       educationList: ['高中', '专科', '本科', '研究生', '博士'],
       minDate: new Date(1950, 0, 1),
       maxDate: new Date(2020, 11, 1),
+      defaultBirth: new Date(1990, 0, 1),
       name: '',
       sex: '',
       birthday: '',
@@ -166,7 +175,7 @@ export default {
       }, // 工作地点
       mineWx: '',
       parentWx: '',
-      photos: [],
+      photos: ['http://q78n6p270.bkt.clouddn.com/Fvc2JdpEmpy0n-08u3ydW1K44qv4'],
       isShowSexSheet: false,
       isShowBirthDayPicker: false,
       isShowHomePicker: false,
@@ -192,12 +201,13 @@ export default {
       data.education = postDetail.educational
       data.mineWx = postDetail.vx
       data.parentWx = postDetail.parentVx
-      data.photos = postDetail.imgs.map(item => ({ url: item }))
+      data.photos = postDetail.imgs
       data.standard = postDetail.standard
     }
 
     // 生命周期
     onMounted(() => {
+      toolkit.wxConfig()
       const formData = route.params.formData ? JSON.parse(route.params.formData) : null
 
       if (formData) {
@@ -206,10 +216,13 @@ export default {
     })
 
     // 截取掉 '省' '市' 两个字
+    // 截取掉 '省' '市' 两个字
     const locationSlice = name => {
-      return name.slice(0, name.length - 1)
+      if (name.indexOf('省') > -1 || name.indexOf('市') > -1) {
+        return name.slice(0, name.length - 1)
+      }
+      return name
     }
-
     const onSelectSex = sex => {
       data.sex = sex
       data.isShowSexSheet = false
@@ -224,7 +237,7 @@ export default {
       const province = locationSlice(home[0].name)
       const city = locationSlice(home[1].name)
       data.homeTown = {
-        name: home.map(item => item.name).join('-'),
+        name: city,
         code: home[home.length - 1].code,
         province,
         city
@@ -236,7 +249,7 @@ export default {
       const province = locationSlice(workplace[0].name)
       const city = locationSlice(workplace[1].name)
       data.workplace = {
-        name: workplace.map(item => item.name).join('-'),
+        name: city,
         code: workplace[workplace.length - 1].code,
         province,
         city
@@ -248,19 +261,8 @@ export default {
       data.isShowEducationPicker = false
     }
 
-    const onBeforerUpload = file => {
-      if (file.type !== 'image/jpeg') {
-        Toast('请上传 jpg 格式图片')
-        return false
-      }
-      // 上传图片
-      return true
-    }
-
-    const onAfterUpload = ({ file }) => {
-      fileUpload(file, function(res) {
-        data.photos[data.photos.length - 1].url = res
-      })
+    const getPhotos = photos => {
+      data.photos = photos
     }
 
     // 提交表单的时候上传图片到服务器
@@ -289,12 +291,13 @@ export default {
       if (!values.mineWx) {
         return Toast('请填写本人微信')
       }
-      if (!values.photos.length) {
+      if (!data.photos.length) {
         return Toast('请上传照片')
       }
       if (!values.standard) {
         return Toast('请填写择偶标准')
       }
+      $loading.show()
       // 提交表单上传图片
       cretePostApi({
         post: {
@@ -309,11 +312,17 @@ export default {
           standard: data.standard,
           vx: data.mineWx, //本人微信
           parentVx: data.parentWx, //家长微信
-          imgs: data.photos.map(item => item.url)
+          imgs: data.photos
         }
-      }).then(({ data: resData }) => {
-        router.replace({ path: '/detail/' + resData.id + '/0' })
       })
+        .then(({ data: resData }) => {
+          $loading.hide()
+          router.replace({ path: '/detail/' + resData.id, query: { edite: 1 } })
+        })
+        .catch(err => {
+          $loading.hide()
+          Toast(err.data.errMessage)
+        })
     }
 
     return {
@@ -325,8 +334,7 @@ export default {
       onSelectHome,
       onSelectWorkplace,
       onSelectEducation,
-      onBeforerUpload,
-      onAfterUpload
+      getPhotos
     }
   }
 }

@@ -9,7 +9,7 @@
     </section>
     <section class="created">
       <h2>我创建的</h2>
-      <div class="item-con " v-for="(item, index) in mineList" :key="item.id" @click="toDetailPage(item.id)">
+      <div class="item-con " v-for="(item, index) in mineList" :key="item.id" @click="toDetailPage(item.id, 'edite')">
         <div :class="['person-item', 'flex-between-center', index == 0 ? 'van-hairline--bottom' : 0]">
           <div class="info">
             <div>
@@ -26,7 +26,7 @@
     </section>
     <section class="buyed">
       <h2>我购买的</h2>
-      <div class="item-con " v-for="(item, index) in buyList" :key="item.id" @click="toDetailPage(item.id)">
+      <div class="item-con " v-for="(item, index) in buyList" :key="item.id" @click="toDetailPage(item.id, 'complain')">
         <div :class="['person-item', 'flex-between-center', index == 0 ? 'van-hairline--bottom' : 0]">
           <div class="info">
             <div>
@@ -74,8 +74,9 @@ export default {
       })
     })
 
-    const toDetailPage = postId => {
-      router.push({ path: '/detail/' + postId + '/1' })
+    const toDetailPage = (postId, btnType) => {
+      // router.push({ path: '/detail/' + postId, query: { [btnType]: 1 } })
+      router.push({ name: 'Detail', params: { postId, [btnType]: 1 } })
     }
 
     return {

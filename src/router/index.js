@@ -12,7 +12,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "Home" */ '../views/Home/Home.vue')
   },
   {
-    path: '/detail/:postId/:canEdite',
+    path: '/detail/:postId/',
     name: 'Detail',
     meta: { keepAlive: false },
     component: () => import(/* webpackChunkName: "Detail" */ '../views/Detail/Detail.vue')

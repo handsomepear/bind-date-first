@@ -1,4 +1,4 @@
-import * as qiniu from 'qiniu-js'
+// import * as qiniu from 'qiniu-js'
 import axios from 'axios'
 import ENV from './_ENV'
 export default function fileUpload(file, cb) {
@@ -13,25 +13,21 @@ export default function fileUpload(file, cb) {
   })
     .then(res => {
       let token = res.data.uploadInfoList[0].token
-      let key = res.data.uploadInfoList[0].key
-      let finalUrl = res.data.uploadInfoList[0].finalUrl
-      let config = {
-        useCdnDomain: true
-      }
-      let putExtra = {
-        fname: '',
-        params: {},
-        mimeType: null
-      }
-      let observer = {
-        next() {},
-        error() {},
-        complete() {
-          cb(finalUrl)
+      let host = res.data.uploadInfoList[0].host
+      var pic = file
+      var url = 'http://up-z1.qiniup.com/putb64/-1' //非华东空间需要根据注意事项 1 修改上传域名
+      var xhr = new XMLHttpRequest()
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+          // document.getElementById('myDiv').innerHTML = xhr.responseText
+          const res = JSON.parse(xhr.responseText)
+          cb(host + res.key)
         }
       }
-      let observable = qiniu.upload(file, key, token, putExtra, config)
-      observable.subscribe(observer)
+      xhr.open('POST', url, true)
+      xhr.setRequestHeader('Content-Type', 'application/octet-stream')
+      xhr.setRequestHeader('Authorization', 'UpToken ' + token)
+      xhr.send(pic)
     })
     .catch(() => {})
 }

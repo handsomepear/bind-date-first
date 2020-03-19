@@ -99,9 +99,7 @@
     <section class="head">
       <div class="top">
         <div class="area-type" @click="isShowType = true">{{ type.name }} <van-icon name="arrow-down" /></div>
-        <div class="area-type" @click="isShowAreaPanel = true">
-          {{ filterLocation(location.name) }}<van-icon name="arrow-down" />
-        </div>
+        <div class="area-type" @click="isShowAreaPanel = true">{{ location.city }}<van-icon name="arrow-down" /></div>
       </div>
       <section class="tab-list">
         <div :class="['tab-item flex-box flex-center', tabSex === 2 ? 'choosed' : '']" @click="onChooseTab(2)">
@@ -198,17 +196,23 @@ export default {
 
     // 截取掉 '省' '市' 两个字
     const locationSlice = name => {
-      return name.slice(0, name.length - 1)
+      if (name.indexOf('省') > -1 || name.indexOf('市') > -1) {
+        return name.slice(0, name.length - 1)
+      }
+      return name
     }
 
     const getPostList = () => {
       const sex = data.tabSex === 2 ? 'female' : 'male'
       data[sex].loading = true
+      const province = data.location.province
+      const city = data.location.city
       getPostListApi({
         pageSize: 5,
-        pageRecord: data.tabSex === 2 ? data.female.nextPage : data.male.nextPage,
-        province: data.location.province,
-        city: data.location.city,
+        // pageRecord: data.tabSex === 2 ? data.female.nextPage : data.male.nextPage,
+        pageRecord: data[sex].nextPage,
+        province: province === '全部' ? '' : province,
+        city: city === '全部' ? '' : city,
         sex: data.tabSex,
         locType: data.type.value
       })
@@ -322,7 +326,7 @@ export default {
       }
     }
     const onViewDetail = postId => {
-      router.push({ path: '/detail/' + postId + '/0' })
+      router.push({ path: '/detail/' + postId })
     }
     const toCreatePage = () => {
       router.push({ path: '/create' })
