@@ -106,7 +106,7 @@
         title="家乡选择"
         columns-num="2"
         @confirm="onSelectHome"
-        @cancel="showArea = false"
+        @cancel="isShowHomePicker = false"
       />
     </van-popup>
     <!-- 工作地点选择 -->
@@ -116,7 +116,7 @@
         title="工作地点选择"
         columns-num="2"
         @confirm="onSelectWorkplace"
-        @cancel="showArea = false"
+        @cancel="isShowWorkplacePicker = false"
       />
     </van-popup>
     <!-- 学历选择 -->
@@ -151,7 +151,10 @@ export default {
     const $loading = context.root.$loading
     const data = reactive({
       standard: '', // 择偶标准
-      sexOptions: [{ name: '男' }, { name: '女' }],
+      sexOptions: [
+        { name: '男', value: 1 },
+        { name: '女', value: 2 }
+      ],
       educationList: ['高中', '专科', '本科', '研究生', '博士'],
       minDate: new Date(1950, 0, 1),
       maxDate: new Date(2020, 11, 1),
@@ -175,7 +178,7 @@ export default {
       }, // 工作地点
       mineWx: '',
       parentWx: '',
-      photos: ['http://q78n6p270.bkt.clouddn.com/Fvc2JdpEmpy0n-08u3ydW1K44qv4'],
+      photos: [],
       isShowSexSheet: false,
       isShowBirthDayPicker: false,
       isShowHomePicker: false,
@@ -191,7 +194,7 @@ export default {
         province: postDetail.province,
         city: postDetail.city
       }
-      data.sex = { name: ['', '男', '女'][postDetail.sex] }
+      data.sex = { name: ['', '男', '女'][postDetail.sex], code: postDetail.sex }
       data.job = postDetail.occupation
       data.workplace = {
         name: postDetail.workProvince + '-' + postDetail.workCity,
@@ -301,6 +304,7 @@ export default {
       // 提交表单上传图片
       cretePostApi({
         post: {
+          sex: data.sex.value,
           name: data.name,
           birth: data.birthday,
           province: data.homeTown.province,
