@@ -20,12 +20,15 @@ const toolkit = {
   },
   // 获取 code
   login(success, fail) {
-    let requestParams = this.getRequest()
+    const requestParams = this.getRequest()
+    const proxyId = requestParams.proxyId
+    // 保存 proxyId ，在分享的时候需要使用
+    proxyId && sessionStorage.setItem('proxyId', proxyId)
     // code 已经拿到
     if (requestParams.code) {
       request({
         url: '/login',
-        data: { code: requestParams.code, proxyId: requestParams.proxyId || null }
+        data: { code: requestParams.code, proxyId: proxyId || null }
       })
         .then(({ data }) => {
           success && success(data)

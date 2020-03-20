@@ -224,9 +224,10 @@ export default {
             data[sex].finished = true // 控制列表是否加载完毕
           }
           const shareItem = data[sex].postList[0]
+          const proxyId = sessionStorage.getItem('proxyId')
           toolkit.wxShare('onMenuShareTimeline', {
             title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
-            link: '//www.geinigejuzichi.top/', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            link: '//www.geinigejuzichi.top/' + proxyId ? '?proxyId=' + proxyId : '', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: shareItem && shareItem.imgs[0] // 分享图标
           })
           toolkit.wxShare('onMenuShareAppMessage', {
@@ -234,7 +235,7 @@ export default {
             desc:
               shareItem &&
               `年龄:${shareItem.age}, 家乡:${shareItem.province}, 职业:${shareItem.occupation}, 工作地点:${shareItem.workProvince}, 择偶标准:${shareItem.standard}`, // 分享描述
-            link: '//www.geinigejuzichi.top/', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            link: '//www.geinigejuzichi.top/' + proxyId ? '?proxyId=' + proxyId : '', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: shareItem && shareItem.imgs[0]
           })
         })

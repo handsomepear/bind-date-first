@@ -50,11 +50,21 @@
     <section class="page-bottom" v-else>
       <!-- 不可编辑 -->
       <div class="contact-way flex-between-center" v-if="postDetail.hasBuy">
-        <div class="contact-button flex-center" v-clipboard:copy="parentWx" v-clipboard:success="parentCopySuccess">
+        <div
+          v-if="postDetail.parentVx"
+          class="contact-button flex-center"
+          v-clipboard:copy="parentWx"
+          v-clipboard:success="parentCopySuccess"
+        >
           <span>家长微信：</span>
           <span>{{ postDetail.parentVx }}</span>
         </div>
-        <div class="contact-button flex-center" v-clipboard:copy="mineWx" v-clipboard:success="mineCopySuccess">
+        <div
+          v-if="postDetail.vx"
+          class="contact-button flex-center"
+          v-clipboard:copy="mineWx"
+          v-clipboard:success="mineCopySuccess"
+        >
           <span>本人微信：</span>
           <span>{{ postDetail.vx }}</span>
         </div>
@@ -150,15 +160,16 @@ export default {
         id: route.params.postId
       }).then(({ data: resData }) => {
         data.postDetail = resData.post
+        const proxyId = sessionStorage.getItem('proxyId')
         toolkit.wxShare('onMenuShareTimeline', {
           title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
-          link: '//www.geinigejuzichi.top/#/detail/' + route.params.postId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          link: '//www.geinigejuzichi.top/' + proxyId ? '?proxyId=' + proxyId : '' + '#/detail/' + route.params.postId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
           imgUrl: data.postDetail.imgs[0] // 分享图标
         })
         toolkit.wxShare('onMenuShareAppMessage', {
           title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
           desc: `年龄:${data.postDetail.age}, 家乡:${data.postDetail.province}, 职业:${data.postDetail.occupation}, 工作地点:${data.postDetail.workProvince}, 择偶标准:${data.postDetail.standard}`, // 分享描述
-          link: '//www.geinigejuzichi.top/#/detail/' + route.params.postId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          link: '//www.geinigejuzichi.top/' + proxyId ? '?proxyId=' + proxyId : '' + '#/detail/' + route.params.postId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
           imgUrl: data.postDetail.imgs[0]
         })
       })
@@ -193,6 +204,7 @@ export default {
           signType: 'MD5', // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
           paySign: resData.paySign, // 支付签名
           success: function() {
+            data.isShowPayModal = false
             // 显示微信号
             data.postDetail.hasBuy = true
           }
