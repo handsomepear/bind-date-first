@@ -1,7 +1,7 @@
 <template>
   <!-- 分享 -->
   <div class="share-com">
-    <div :class="['share-button', size]" @click="onShowShareTips">
+    <div :class="['share-button', size]" :style="style" @click="onShowShareTips">
       <div class="share-img">
         <img src="../assets/imgs/share.png" alt="" />
       </div>
@@ -22,8 +22,7 @@ export default {
   props: {
     size: String
   },
-  setup(props) {
-    const size = props.size || ''
+  setup() {
     const isShowShareTips = ref(false)
     const onShowShareTips = () => {
       isShowShareTips.value = true
@@ -34,7 +33,6 @@ export default {
     }
 
     return {
-      size,
       isShowShareTips,
       onShowShareTips,
       onHideShareTips
@@ -46,17 +44,29 @@ export default {
 <style lang="less" scoped>
 .share-button {
   display: flex;
-  width: 75.5px;
-  height: 42px;
   justify-content: center;
   align-items: center;
-  background-color: #edffff;
-  box-shadow: 0px 1.5px 3px 0px rgba(37, 211, 207, 0.2);
   border-radius: 6px;
-  color: #333;
-  font-size: 15px;
-  &.large {
+  width: 167.5px;
+  height: 44px;
+  background: @themeColor;
+  box-shadow: 0px 3px 6.5px 0px rgba(37, 211, 207, 0.4);
+  color: #fff;
+
+  &.small,
+  &.medium {
+    width: 75.5px;
+    height: 42px;
+    border-radius: 6px;
+    font-size: 15px;
+    color: #333;
+    box-shadow: 0px 1.5px 3px 0px rgba(37, 211, 207, 0.2);
+    background: linear-gradient(0deg, rgba(187, 255, 253, 1), rgba(237, 255, 255, 1));
+  }
+
+  &.medium {
     width: 146px;
+    height: 44px;
   }
 }
 .share-img {

@@ -1,13 +1,12 @@
 <template>
   <div class="create-page">
-    <!-- <h2 class="title">创建相亲贴</h2> -->
     <Title name="创建相亲贴" color="#333" />
     <van-form @submit="onSubmit">
       <van-field v-model="name" name="name" label="姓名:" placeholder="请输入" input-align="right" />
       <van-field
         v-model="birthday"
         name="birthday"
-        label="生日:"
+        label="年龄:"
         placeholder="请选择"
         input-align="right"
         right-icon="arrow"
@@ -37,7 +36,7 @@
         readonly
         @click="isShowHomePicker = true"
       />
-      <van-field v-model="job" name="job" label="职业:" placeholder="请输入" input-align="right" />
+      <van-field v-model="job" maxlength="8" name="job" label="职业:" placeholder="请输入" input-align="right" />
       <van-field
         v-model="education"
         name="education"
@@ -60,8 +59,14 @@
         readonly
         @click="isShowWorkplacePicker = true"
       />
-      <van-field v-model="mineWx" name="mineWx" label="本人微信:" placeholder="请输入" input-align="right" />
-      <van-field v-model="parentWx" name="parentWx" label="家长微信:" placeholder="请输入" input-align="right" />
+      <van-field
+        v-model="mineWx"
+        maxlength="20"
+        name="mineWx"
+        label="本人微信:"
+        placeholder="请输入"
+        input-align="right"
+      />
       <section class="upload-con">
         <div class="label">图片：</div>
         <WxUploader :photos="photos" @getPhotos="getPhotos" />
@@ -81,7 +86,8 @@
         />
       </section>
       <div class="publish-con flex-center">
-        <button class="publish-btn flex-center" type="submit">发布</button>
+        <button v-if="isEdite" class="publish-btn flex-center" type="submit">完成</button>
+        <button v-else class="publish-btn flex-center" type="submit">发布</button>
       </div>
     </van-form>
 
@@ -89,12 +95,11 @@
     <van-action-sheet v-model="isShowSexSheet" :actions="sexOptions" @select="onSelectSex" />
     <!-- 生日选择 -->
     <van-popup v-model="isShowBirthDayPicker" position="bottom">
-      <van-datetime-picker
-        type="year-month"
-        :min-date="minDate"
-        :max-date="maxDate"
-        v-model="defaultBirth"
+      <van-picker
+        show-toolbar
         title="生日选择"
+        :columns="birthColumns"
+        :default-index="40"
         @confirm="onSelectBirthDay"
         @cancel="isShowBirthDayPicker = false"
       />
@@ -134,31 +139,40 @@
 
 <script>
 import { reactive, toRefs, onMounted } from '@vue/composition-api'
-import areaList from '../../assets/data/area'
+import areaList from '../../static/data/area'
 import Title from '@/components/Title'
 import WxUploader from '@/components/WxUploader'
-import { cretePostApi } from '../../api/api'
+import { cretePostApi, updatePostApi } from '../../api/api'
 import toolkit from '../../utils/_toolkit'
 export default {
   components: {
     Title,
     WxUploader
   },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      if (from.name === 'Detail') {
+        // 编辑
+        vm.isEdite = true
+      }
+    })
+  },
   setup(props, context) {
     const router = context.root.$router
     const route = context.root.$route
     const Toast = context.root.$toast
     const $loading = context.root.$loading
+    const curYear = new Date().getFullYear()
+    const startYear = 1950
     const data = reactive({
+      updatePostId: '', // 当前编辑的帖子 ID
       standard: '', // 择偶标准
       sexOptions: [
         { name: '男', value: 1 },
         { name: '女', value: 2 }
       ],
       educationList: ['高中', '专科', '本科', '研究生', '博士'],
-      minDate: new Date(1950, 0, 1),
-      maxDate: new Date(2020, 11, 1),
-      defaultBirth: new Date(1990, 0, 1),
+      birthColumns: [...new Array(curYear - startYear + 1).keys()].map(item => item + 1950),
       name: '',
       sex: '',
       birthday: '',
@@ -176,9 +190,11 @@ export default {
         province: '',
         city: ''
       }, // 工作地点
+      areaList: null,
       mineWx: '',
       parentWx: '',
       photos: [],
+      isEdite: false, // 是否在编辑
       isShowSexSheet: false,
       isShowBirthDayPicker: false,
       isShowHomePicker: false,
@@ -187,6 +203,7 @@ export default {
     })
 
     const initData = postDetail => {
+      data.updatePostId = postDetail.id
       data.name = postDetail.name
       data.birthday = postDetail.birth
       data.homeTown = {
@@ -203,7 +220,6 @@ export default {
       }
       data.education = postDetail.educational
       data.mineWx = postDetail.vx
-      data.parentWx = postDetail.parentVx
       data.photos = postDetail.imgs
       data.standard = postDetail.standard
     }
@@ -211,6 +227,7 @@ export default {
     // 生命周期
     onMounted(() => {
       toolkit.wxConfig()
+      data.areaList = areaList
       const formData = route.params.formData ? JSON.parse(route.params.formData) : null
 
       if (formData) {
@@ -218,27 +235,19 @@ export default {
       }
     })
 
-    // 截取掉 '省' '市' 两个字
-    // 截取掉 '省' '市' 两个字
-    const locationSlice = name => {
-      if (name.indexOf('省') > -1 || name.indexOf('市') > -1) {
-        return name.slice(0, name.length - 1)
-      }
-      return name
-    }
     const onSelectSex = sex => {
       data.sex = sex
       data.isShowSexSheet = false
     }
 
-    const onSelectBirthDay = date => {
-      data.birthday = date.getFullYear()
+    const onSelectBirthDay = birthday => {
+      data.birthday = birthday
       data.isShowBirthDayPicker = false
     }
 
     const onSelectHome = home => {
-      const province = locationSlice(home[0].name)
-      const city = locationSlice(home[1].name)
+      const province = home[0].name
+      const city = home[1].name
       data.homeTown = {
         name: city,
         code: home[home.length - 1].code,
@@ -249,8 +258,8 @@ export default {
     }
 
     const onSelectWorkplace = workplace => {
-      const province = locationSlice(workplace[0].name)
-      const city = locationSlice(workplace[1].name)
+      const province = workplace[0].name
+      const city = workplace[1].name
       data.workplace = {
         name: city,
         code: workplace[workplace.length - 1].code,
@@ -297,40 +306,71 @@ export default {
       if (!data.photos.length) {
         return Toast('请上传照片')
       }
+      if (data.photos.length > 9) {
+        return Toast('最多上传9张照片')
+      }
       if (!values.standard) {
         return Toast('请填写择偶标准')
       }
       $loading.show()
-      // 提交表单上传图片
-      cretePostApi({
-        post: {
-          sex: data.sex.value,
-          name: data.name,
-          birth: data.birthday,
-          province: data.homeTown.province,
-          city: data.homeTown.city,
-          workProvince: data.workplace.province,
-          workCity: data.workplace.city,
-          occupation: data.job,
-          educational: data.education,
-          standard: data.standard,
-          vx: data.mineWx, //本人微信
-          parentVx: data.parentWx, //家长微信
-          imgs: data.photos
-        }
-      })
-        .then(({ data: resData }) => {
-          $loading.hide()
-          router.replace({ path: '/detail/' + resData.id, query: { edite: 1 } })
+      data.isEdite = false
+      if (data.isEdite) {
+        updatePostApi({
+          post: {
+            id: data.updatePostId,
+            sex: data.sex.value,
+            name: data.name,
+            birth: data.birthday,
+            province: data.homeTown.province,
+            city: data.homeTown.city,
+            workProvince: data.workplace.province,
+            workCity: data.workplace.city,
+            occupation: data.job,
+            educational: data.education,
+            standard: data.standard,
+            vx: data.mineWx, //本人微信
+            parentVx: data.parentWx, //家长微信
+            imgs: data.photos
+          }
         })
-        .catch(err => {
-          $loading.hide()
-          Toast(err.data.errMessage)
+          .then(() => {
+            $loading.hide()
+            router.replace({ path: '/detail/' + data.updatePostId })
+          })
+          .catch(err => {
+            $loading.hide()
+            Toast(err.data.errMessage)
+          })
+      } else {
+        cretePostApi({
+          post: {
+            sex: data.sex.value,
+            name: data.name,
+            birth: data.birthday,
+            province: data.homeTown.province,
+            city: data.homeTown.city,
+            workProvince: data.workplace.province,
+            workCity: data.workplace.city,
+            occupation: data.job,
+            educational: data.education,
+            standard: data.standard,
+            vx: data.mineWx, //本人微信
+            parentVx: data.parentWx, //家长微信
+            imgs: data.photos
+          }
         })
+          .then(({ data: resData }) => {
+            $loading.hide()
+            router.replace({ path: '/detail/' + resData.id })
+          })
+          .catch(err => {
+            $loading.hide()
+            Toast(err.data.errMessage)
+          })
+      }
     }
 
     return {
-      areaList,
       ...toRefs(data),
       onSelectSex,
       onSubmit,

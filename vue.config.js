@@ -1,7 +1,8 @@
 const path = require('path')
 const assetsDir = 'assets'
-const CompressionPlugin = require('compression-webpack-plugin')
+// const CompressionPlugin = require('compression-webpack-plugin')
 module.exports = {
+  productionSourceMap: process.env.NODE_ENV === 'production' ? false : true,
   devServer: {
     port: 80,
     disableHostCheck: true,
@@ -22,19 +23,20 @@ module.exports = {
       'vue-router': 'VueRouter',
       vant: 'vant',
       wx: 'wx',
+      qiniu: 'qiniu',
       axios: 'axios'
     }
-    if (process.env.NODE_ENV === 'production') {
-      return {
-        plugins: [
-          new CompressionPlugin({
-            test: /\.js$|\.html$|.\css/, //匹配文件名
-            threshold: 10240, //对超过10k的数据压缩
-            deleteOriginalAssets: false //不删除源文件
-          })
-        ]
-      }
-    }
+    // if (process.env.NODE_ENV === 'production') {
+    //   return {
+    //     plugins: [
+    //       new CompressionPlugin({
+    //         test: /\.js$|\.html$|.\css/, //匹配文件名
+    //         threshold: 10240, //对超过10k的数据压缩
+    //         deleteOriginalAssets: false //不删除源文件
+    //       })
+    //     ]
+    //   }
+    // }
   },
   publicPath: process.env.NODE_ENV === 'production' ? '' : process.env.NODE_ENV === 'alpha' ? '/' : '/',
   assetsDir: assetsDir,

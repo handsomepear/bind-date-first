@@ -9,7 +9,7 @@
     </section>
     <section class="created">
       <h2>我创建的</h2>
-      <div class="item-con " v-for="(item, index) in mineList" :key="item.id" @click="toDetailPage(item.id, 'edite')">
+      <div class="item-con " v-for="(item, index) in mineList" :key="item.id" @click="toDetailPage(item.id)">
         <div :class="['person-item', 'flex-between-center', index == 0 ? 'van-hairline--bottom' : 0]">
           <div class="info">
             <div>
@@ -26,7 +26,7 @@
     </section>
     <section class="buyed">
       <h2>我购买的</h2>
-      <div class="item-con " v-for="(item, index) in buyList" :key="item.id" @click="toDetailPage(item.id, 'complain')">
+      <div class="item-con " v-for="(item, index) in buyList" :key="item.id" @click="toDetailPage(item.id)">
         <div :class="['person-item', 'flex-between-center', index == 0 ? 'van-hairline--bottom' : 0]">
           <div class="info">
             <div>
@@ -42,9 +42,9 @@
       </div>
     </section>
     <div class="contact flex-center">
-      <div class="contact-btn flex-center">
+      <div class="contact-btn flex-center" v-clipboard:copy="contactWx" v-clipboard:success="mineCopySuccess">
         <img src="../../assets/imgs/wechat.png" alt="" />
-        <span>客服微信：jd98998</span>
+        <span>客服微信：{{ contactWx }}</span>
       </div>
     </div>
   </div>
@@ -60,10 +60,12 @@ export default {
   },
   setup(props, context) {
     const router = context.root.$router
+    const Toast = context.root.$toast
     const data = reactive({
       mineList: [],
       buyList: [],
-      userInfo: {}
+      userInfo: {},
+      contactWx: 'jd98998'
     })
 
     onMounted(() => {
@@ -74,14 +76,18 @@ export default {
       })
     })
 
-    const toDetailPage = (postId, btnType) => {
-      // router.push({ path: '/detail/' + postId, query: { [btnType]: 1 } })
-      router.push({ name: 'Detail', params: { postId, [btnType]: 1 } })
+    const toDetailPage = postId => {
+      router.push({ path: '/detail/' + postId })
+    }
+
+    const mineCopySuccess = () => {
+      Toast('客服微信复制成功')
     }
 
     return {
       ...toRefs(data),
-      toDetailPage
+      toDetailPage,
+      mineCopySuccess
     }
   }
 }

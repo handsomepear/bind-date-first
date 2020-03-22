@@ -4,7 +4,7 @@
     <!-- 照片 -->
     <van-swipe class="photos" @change="onPhotoChange">
       <van-swipe-item v-for="(item, index) in postDetail.imgs" :key="index">
-        <img :src="item" alt="" />
+        <img :src="item + '?imageslim'" alt="" />
       </van-swipe-item>
       <div class="custom-indicator" slot="indicator">{{ current + 1 }}/{{ postDetail.imgs.length }}</div>
     </van-swipe>
@@ -14,11 +14,13 @@
       <div class="info">
         <div>
           <span class="title">{{ postDetail.name }}</span>
-          <span>年龄:{{ postDetail.age }}岁 | 哪里人:{{ postDetail.province }}</span>
+          <span>年龄:{{ postDetail.age }}岁 | 家乡:{{ postDetail.province }}</span>
         </div>
         <div>
           <span>
-            职业:{{ postDetail.occupation }} | 现居:{{ postDetail.workProvince }} | 学历:{{ postDetail.educational }}
+            职业:{{ postDetail.occupation }} | 工作地点:{{ postDetail.workProvince }} | 学历:{{
+              postDetail.educational
+            }}
           </span>
         </div>
       </div>
@@ -30,7 +32,7 @@
         </div>
       </div>
     </section>
-    <div v-if="isShowComplainBtn" class="complain-btn flex-column flex-center" @click="isShowComplainModal = true">
+    <div v-if="postDetail.hasBuy" class="complain-btn flex-column flex-center" @click="isShowComplainModal = true">
       <img src="../../assets/imgs/tousu.png" alt="" />
       <span>投诉</span>
     </div>
@@ -43,7 +45,7 @@
       <div class="option flex-between-center">
         <div class="edite-btn flex-center" @click="onEdite">编辑</div>
         <div class="delete-btn flex-center" @click="onDelete">删除</div>
-        <Share size="large" @click.native="onShare" />
+        <Share size="medium" />
       </div>
     </section>
     <!-- 底部 -->
@@ -51,18 +53,9 @@
       <!-- 不可编辑 -->
       <div class="contact-way flex-between-center" v-if="postDetail.hasBuy">
         <div
-          v-if="postDetail.parentVx"
-          class="contact-button flex-center"
-          v-clipboard:copy="parentWx"
-          v-clipboard:success="parentCopySuccess"
-        >
-          <span>家长微信：</span>
-          <span>{{ postDetail.parentVx }}</span>
-        </div>
-        <div
           v-if="postDetail.vx"
           class="contact-button flex-center"
-          v-clipboard:copy="mineWx"
+          v-clipboard:copy="postDetail.vx"
           v-clipboard:success="mineCopySuccess"
         >
           <span>本人微信：</span>
@@ -70,16 +63,15 @@
         </div>
       </div>
       <div class="contact-way flex-between-center" v-else>
-        <div class="contact-button flex-center" @click="onShowPayModal">家长联系方式</div>
         <div class="contact-button flex-center" @click="onShowPayModal">本人联系方式</div>
+        <Share />
       </div>
       <div class="option flex-between-center">
         <!-- 公众号 -->
         <div class="public-code flex-center">
           <img src="../../assets/imgs/hongbao.png" alt="" />
-          <span>关注公众号，领10元现金红包</span>
+          <span>关注公众号，方便下次进入产品</span>
         </div>
-        <Share @click.native="onShare" />
       </div>
     </section>
     <!-- 支付弹窗 -->
@@ -126,7 +118,7 @@
 </template>
 
 <script>
-import { reactive, toRefs, onMounted } from '@vue/composition-api'
+import { ref, reactive, toRefs, onMounted } from '@vue/composition-api'
 import Title from '@/components/Title.vue'
 import Share from '@/components/Share.vue'
 import { getPostDetailApi, deleteApi, accuseApi, buyApi } from '../../api/api'
@@ -145,14 +137,19 @@ export default {
       current: 0,
       isShowPayModal: false, // 是否展示支付弹窗
       isShowComplainModal: false, // 是否展示投诉弹窗
-      isShowComplainBtn: route.params.complain ? true : false, // 是否展示投诉按钮
       parentWx: '',
-      mineWx: '',
-      canEdite: route.params.edite ? true : false,
+      canEdite: false,
       postDetail: null,
-      isShowShareTips: false,
       accuseReason: '', // 投诉原因
       accuseTel: '' // 投诉电话
+    })
+    const shareButtonStyle = ref({
+      width: '167.5px',
+      height: '44px',
+      background: '@themeColor',
+      boxShadow: '0px 3px 6.5px 0px rgba(37, 211, 207, 0.4)',
+      borderRadius: '8px',
+      color: '#fff'
     })
     // 获取帖子详情
     const getPostDetail = () => {
@@ -161,15 +158,21 @@ export default {
       }).then(({ data: resData }) => {
         data.postDetail = resData.post
         const proxyId = sessionStorage.getItem('proxyId')
+        const userId = JSON.parse(localStorage.getItem('userInfo')).id
+        if (userId === data.postDetail.userId) {
+          data.canEdite = true
+        }
         toolkit.wxShare('onMenuShareTimeline', {
           title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
-          link: '//www.geinigejuzichi.top/' + proxyId ? '?proxyId=' + proxyId : '' + '#/detail/' + route.params.postId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          link:
+            '//www.geinigejuzichi.top/' + (proxyId ? '?proxyId=' + proxyId : '') + '#/detail/' + route.params.postId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
           imgUrl: data.postDetail.imgs[0] // 分享图标
         })
         toolkit.wxShare('onMenuShareAppMessage', {
           title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
           desc: `年龄:${data.postDetail.age}, 家乡:${data.postDetail.province}, 职业:${data.postDetail.occupation}, 工作地点:${data.postDetail.workProvince}, 择偶标准:${data.postDetail.standard}`, // 分享描述
-          link: '//www.geinigejuzichi.top/' + proxyId ? '?proxyId=' + proxyId : '' + '#/detail/' + route.params.postId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          link:
+            '//www.geinigejuzichi.top/' + (proxyId ? '?proxyId=' + proxyId : '') + '#/detail/' + route.params.postId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
           imgUrl: data.postDetail.imgs[0]
         })
       })
@@ -212,10 +215,6 @@ export default {
       })
     }
 
-    const parentCopySuccess = () => {
-      // console.log('复制成国内:' + e.text)
-      Toast('家长微信复制成功')
-    }
     const mineCopySuccess = () => {
       Toast('本人微信复制成功')
     }
@@ -266,20 +265,16 @@ export default {
       })
     }
 
-    const onShare = () => {
-      data.isShowShareTips = true
-    }
     return {
       ...toRefs(data),
+      shareButtonStyle,
       onPhotoChange,
       onGoHome,
       onShowPayModal,
       onPay,
-      parentCopySuccess,
       mineCopySuccess,
       onDelete,
       onEdite,
-      onShare,
       onSubmitAccuse
     }
   }

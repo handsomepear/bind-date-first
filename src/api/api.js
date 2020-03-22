@@ -22,6 +22,13 @@ export const cretePostApi = data => {
   })
 }
 
+export const updatePostApi = data => {
+  return fetch({
+    url: '/post/update',
+    data
+  })
+}
+
 export const deleteApi = data => {
   return fetch({
     url: '/post/delete',

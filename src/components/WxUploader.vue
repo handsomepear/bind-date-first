@@ -2,7 +2,7 @@
   <div class="uploader-com">
     <div class="img-preview" v-for="(item, index) in photos" :key="item">
       <div class="img-con">
-        <img :src="item" alt="" />
+        <img :src="item + '?imageslim'" alt="" />
       </div>
       <van-icon name="clear" @click.native="deletePhoto(index)" />
     </div>
@@ -31,7 +31,7 @@ export default {
     upload() {
       const _this = this
       wx.chooseImage({
-        count: 1, // 默认9
+        count: 9, // 默认9
         sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
         sourceType: ['album'], // 可以指定来源是相册还是相机，默认二者都有
         success: function(res) {
@@ -41,12 +41,31 @@ export default {
             wx.getLocalImgData({
               localId,
               success(res) {
-                fileUpload(res.localData.split(',')[1], function(img) {
-                  let photos = _this.photos.slice(0)
-                  photos.push(img)
-                  _this.$emit('getPhotos', photos)
-                  _this.$loading.hide()
-                })
+                var localData = res.localData
+                if (localData.indexOf('data:image') != 0) {
+                  //判断是否有这样的头部
+                  localData = 'data:image/jpeg;base64,' + localData
+                }
+                localData = localData.replace(/\r|\n/g, '').replace('data:image/jgp', 'data:image/jpeg')
+                //第一个替换的是换行符，第二个替换的是图片类型，因为在IOS机上测试时看到它的图片类型时jgp，
+                //这不知道时什么格式的图片，为了兼容其他设备就把它转为jpeg
+                const fileBlob = _this.dataURLtoBlob(localData)
+                fileUpload(
+                  fileBlob,
+                  function(img) {
+                    let photos = _this.photos.slice(0)
+                    photos.push(img)
+                    _this.$emit('getPhotos', photos)
+                    _this.$loading.hide()
+                  },
+                  function() {
+                    _this.$loading.hide()
+                    _this.$tast('上传失败,请稍后重试')
+                  }
+                )
+              },
+              fail() {
+                _this.$loading.hide()
               }
             })
           })
@@ -57,6 +76,17 @@ export default {
       let photos = this.photos.slice(0)
       photos.splice(index, 1)
       this.$emit('getPhotos', photos)
+    },
+    dataURLtoBlob(dataurl) {
+      var arr = dataurl.split(','),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n)
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+      }
+      return new Blob([u8arr], { type: mime })
     }
   }
 }

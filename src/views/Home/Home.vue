@@ -16,11 +16,11 @@
           <div class="info">
             <div>
               <span class="title">{{ item.name }}</span>
-              <span>年龄:{{ item.age }}岁 | 哪里人:{{ item.province }}-{{ item.city }}</span>
+              <span>年龄:{{ item.age }}岁 | 家乡:{{ item.city }}</span>
             </div>
             <div>
               <span>
-                职业:{{ item.occupation }} | 现居:{{ item.workProvince }}-{{ item.workCity }} | 学历:
+                职业:{{ item.occupation }} | 工作地点:{{ item.workCity }} | 学历:
                 {{ item.educational }}
               </span>
             </div>
@@ -36,7 +36,7 @@
           <!-- 照片 -->
           <div class="photos">
             <div class="photo-box" v-for="(photoItem, photoIndex) in item.imgs.slice(0, 6)" :key="photoIndex">
-              <img :src="photoItem" alt="" />
+              <img :src="photoItem + '?imageslim'" alt="" />
             </div>
             <div class="photo-box last"></div>
           </div>
@@ -61,11 +61,11 @@
           <div class="info">
             <div>
               <span class="title">{{ item.name }}</span>
-              <span>年龄:{{ item.age }}岁 | 哪里人:{{ item.province }}-{{ item.city }}</span>
+              <span>年龄:{{ item.age }}岁 | 家乡:{{ item.city }}</span>
             </div>
             <div>
               <span>
-                职业:{{ item.occupation }} | 现居:{{ item.workProvince }}-{{ item.workCity }} | 学历:
+                职业:{{ item.occupation }} | 工作地点:{{ item.workCity }} | 学历:
                 {{ item.educational }}
               </span>
             </div>
@@ -81,7 +81,7 @@
           <!-- 照片 -->
           <div class="photos">
             <div class="photo-box" v-for="(photoItem, photoIndex) in item.imgs.slice(0, 6)" :key="photoIndex">
-              <img :src="photoItem" alt="" />
+              <img :src="photoItem + '?imageslim'" alt="" />
             </div>
             <!-- 占位：避免 space-between 导致图片不连续排列 -->
             <div class="photo-box last"></div>
@@ -118,7 +118,7 @@
       <!-- 我的 -->
       <div class="mine-button flex-box flex-center" @click="toMinPage">我的</div>
       <!-- 分享 -->
-      <Share />
+      <Share size="small" />
     </section>
     <van-action-sheet
       v-model="isShowType"
@@ -142,7 +142,7 @@
 
 <script>
 import { onMounted, reactive, toRefs, watch } from '@vue/composition-api'
-import areaList from '@/assets/data/area.js'
+import areaList from '@/static/data/area.js'
 import Share from '@/components/Share.vue'
 import { getPostListApi } from '../../api/api'
 import toolkit from '../../utils/_toolkit'
@@ -179,6 +179,7 @@ export default {
         nextPage: '',
         postList: []
       },
+      areaList: null,
       // 列表相关
 
       // 地域类型配置
@@ -193,14 +194,6 @@ export default {
         }
       ]
     })
-
-    // 截取掉 '省' '市' 两个字
-    const locationSlice = name => {
-      if (name.indexOf('省') > -1 || name.indexOf('市') > -1) {
-        return name.slice(0, name.length - 1)
-      }
-      return name
-    }
 
     const getPostList = () => {
       const sex = data.tabSex === 2 ? 'female' : 'male'
@@ -227,7 +220,7 @@ export default {
           const proxyId = sessionStorage.getItem('proxyId')
           toolkit.wxShare('onMenuShareTimeline', {
             title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
-            link: '//www.geinigejuzichi.top/' + proxyId ? '?proxyId=' + proxyId : '', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            link: '//www.geinigejuzichi.top/' + (proxyId ? '?proxyId=' + proxyId : ''), // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: shareItem && shareItem.imgs[0] // 分享图标
           })
           toolkit.wxShare('onMenuShareAppMessage', {
@@ -235,7 +228,7 @@ export default {
             desc:
               shareItem &&
               `年龄:${shareItem.age}, 家乡:${shareItem.province}, 职业:${shareItem.occupation}, 工作地点:${shareItem.workProvince}, 择偶标准:${shareItem.standard}`, // 分享描述
-            link: '//www.geinigejuzichi.top/' + proxyId ? '?proxyId=' + proxyId : '', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            link: '//www.geinigejuzichi.top/' + (proxyId ? '?proxyId=' + proxyId : ''), // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: shareItem && shareItem.imgs[0]
           })
         })
@@ -251,6 +244,13 @@ export default {
       },
       { lazy: true }
     )
+
+    const locationSlice = name => {
+      if (name.indexOf('市') > -1 || name.indexOf('省') > -1) {
+        return name.slice(0, name.length - 1)
+      }
+      return name
+    }
 
     const getLocationAndList = () => {
       toolkit.getLocationFromBidu(position => {
@@ -272,6 +272,7 @@ export default {
 
     onMounted(() => {
       toolkit.wxConfig()
+      data.areaList = areaList
       const userInfo = window.userInfo || JSON.parse(localStorage.getItem('userInfo'))
       if (userInfo) {
         const userSex = userInfo.sex
@@ -310,12 +311,12 @@ export default {
       data.locationCode = area[1] ? area[1].code : area[0].code
       data.location = {
         name: area.reduce((prev, next) => {
-          const province = locationSlice(prev.name)
-          const city = locationSlice(next.name)
+          const province = prev.name
+          const city = next.name
           return next ? province + '-' + city : province + '-' + province
         }),
-        province: locationSlice(area[0].name),
-        city: locationSlice(area[1].name)
+        province: area[0].name,
+        city: area[1].name
       }
       data.isShowAreaPanel = false
     }
@@ -339,7 +340,6 @@ export default {
       data.isShowShareTips = true
     }
     return {
-      areaList,
       ...toRefs(data),
       // 事件
       onSelectType,
