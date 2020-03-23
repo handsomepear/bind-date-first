@@ -46,22 +46,18 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 6px;
-  width: 167.5px;
+  border-radius: 8px;
+  width: 147.5px;
   height: 44px;
-  background: @themeColor;
-  box-shadow: 0px 3px 6.5px 0px rgba(37, 211, 207, 0.4);
-  color: #fff;
+  color: #333;
+  box-shadow: 0px 1.5px 3px 0px rgba(37, 211, 207, 0.2);
+  background: linear-gradient(0deg, rgba(187, 255, 253, 1), rgba(237, 255, 255, 1));
 
   &.small,
   &.medium {
     width: 75.5px;
     height: 42px;
-    border-radius: 6px;
     font-size: 15px;
-    color: #333;
-    box-shadow: 0px 1.5px 3px 0px rgba(37, 211, 207, 0.2);
-    background: linear-gradient(0deg, rgba(187, 255, 253, 1), rgba(237, 255, 255, 1));
   }
 
   &.medium {

@@ -14,13 +14,12 @@
       <div class="info">
         <div>
           <span class="title">{{ postDetail.name }}</span>
-          <span>年龄:{{ postDetail.age }}岁 | 家乡:{{ postDetail.province }}</span>
+          <span>年龄:{{ postDetail.age }}岁 <span class="vertical-line">|</span> 家乡:{{ postDetail.city }}</span>
         </div>
         <div>
           <span>
-            职业:{{ postDetail.occupation }} | 工作地点:{{ postDetail.workProvince }} | 学历:{{
-              postDetail.educational
-            }}
+            职业:{{ postDetail.occupation }} <span class="vertical-line">|</span> 工作地点:{{ postDetail.workCity }}
+            <span class="vertical-line">|</span> 学历:{{ postDetail.educational }}
           </span>
         </div>
       </div>
@@ -58,19 +57,20 @@
           v-clipboard:copy="postDetail.vx"
           v-clipboard:success="mineCopySuccess"
         >
-          <span>本人微信：</span>
+          <span>微信：</span>
           <span>{{ postDetail.vx }}</span>
         </div>
+        <Share />
       </div>
       <div class="contact-way flex-between-center" v-else>
-        <div class="contact-button flex-center" @click="onShowPayModal">本人联系方式</div>
+        <div class="contact-button flex-center" @click="onShowPayModal">获取联系方式</div>
         <Share />
       </div>
       <div class="option flex-between-center">
         <!-- 公众号 -->
         <div class="public-code flex-center">
           <img src="../../assets/imgs/hongbao.png" alt="" />
-          <span>关注公众号，方便下次进入产品</span>
+          <span>关注公众号，方便下次进入</span>
         </div>
       </div>
     </section>
@@ -163,14 +163,14 @@ export default {
           data.canEdite = true
         }
         toolkit.wxShare('onMenuShareTimeline', {
-          title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
+          title: '找一个生活习惯相同的人结婚-本地人相亲', // 分享标题
           link:
             '//www.geinigejuzichi.top/' + (proxyId ? '?proxyId=' + proxyId : '') + '#/detail/' + route.params.postId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
           imgUrl: data.postDetail.imgs[0] // 分享图标
         })
         toolkit.wxShare('onMenuShareAppMessage', {
-          title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
-          desc: `年龄:${data.postDetail.age}, 家乡:${data.postDetail.province}, 职业:${data.postDetail.occupation}, 工作地点:${data.postDetail.workProvince}, 择偶标准:${data.postDetail.standard}`, // 分享描述
+          title: '找一个生活习惯相同的人结婚-本地人相亲', // 分享标题
+          desc: `年龄:${data.postDetail.age}, 家乡:${data.postDetail.city}, 职业:${data.postDetail.occupation}, 工作地点:${data.postDetail.workCity}, 择偶标准:${data.postDetail.standard}`, // 分享描述
           link:
             '//www.geinigejuzichi.top/' + (proxyId ? '?proxyId=' + proxyId : '') + '#/detail/' + route.params.postId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
           imgUrl: data.postDetail.imgs[0]

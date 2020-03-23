@@ -10,7 +10,7 @@
     <section class="created">
       <h2>我创建的</h2>
       <div class="item-con " v-for="(item, index) in mineList" :key="item.id" @click="toDetailPage(item.id)">
-        <div :class="['person-item', 'flex-between-center', index == 0 ? 'van-hairline--bottom' : 0]">
+        <div :class="['person-item', 'flex-between-center', index > 0 ? 'van-hairline--top' : 0]">
           <div class="info">
             <div>
               <span class="title">{{ item.name }}</span>
@@ -65,7 +65,7 @@ export default {
       mineList: [],
       buyList: [],
       userInfo: {},
-      contactWx: 'jd98998'
+      contactWx: 'bywkkf001'
     })
 
     onMounted(() => {

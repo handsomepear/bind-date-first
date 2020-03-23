@@ -300,8 +300,8 @@ export default {
       if (!values.mineWx) {
         return Toast('请填写本人微信')
       }
-      if (!values.mineWx) {
-        return Toast('请填写本人微信')
+      if (!/^\w+$/.test(values.mineWx)) {
+        return Toast('请填写正确格式的微信号')
       }
       if (!data.photos.length) {
         return Toast('请上传照片')
@@ -313,7 +313,6 @@ export default {
         return Toast('请填写择偶标准')
       }
       $loading.show()
-      data.isEdite = false
       if (data.isEdite) {
         updatePostApi({
           post: {

@@ -16,11 +16,12 @@
           <div class="info">
             <div>
               <span class="title">{{ item.name }}</span>
-              <span>年龄:{{ item.age }}岁 | 家乡:{{ item.city }}</span>
+              <span>年龄:{{ item.age }}岁 <span class="vertical-line">|</span> 家乡:{{ item.city }}</span>
             </div>
             <div>
               <span>
-                职业:{{ item.occupation }} | 工作地点:{{ item.workCity }} | 学历:
+                职业:{{ item.occupation }} <span class="vertical-line">|</span> 工作地点:{{ item.workCity }}
+                <span class="vertical-line">|</span> 学历:
                 {{ item.educational }}
               </span>
             </div>
@@ -61,11 +62,12 @@
           <div class="info">
             <div>
               <span class="title">{{ item.name }}</span>
-              <span>年龄:{{ item.age }}岁 | 家乡:{{ item.city }}</span>
+              <span>年龄:{{ item.age }}岁 <span class="vertical-line">|</span> 家乡:{{ item.city }}</span>
             </div>
             <div>
               <span>
-                职业:{{ item.occupation }} | 工作地点:{{ item.workCity }} | 学历:
+                职业:{{ item.occupation }} <span class="vertical-line">|</span> 工作地点:{{ item.workCity }}
+                <span class="vertical-line">|</span> 学历:
                 {{ item.educational }}
               </span>
             </div>
@@ -142,7 +144,7 @@
 
 <script>
 import { onMounted, reactive, toRefs, watch } from '@vue/composition-api'
-import areaList from '@/static/data/area.js'
+import areaList from '@/static/data/location.js'
 import Share from '@/components/Share.vue'
 import { getPostListApi } from '../../api/api'
 import toolkit from '../../utils/_toolkit'
@@ -219,15 +221,15 @@ export default {
           const shareItem = data[sex].postList[0]
           const proxyId = sessionStorage.getItem('proxyId')
           toolkit.wxShare('onMenuShareTimeline', {
-            title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
+            title: '找一个生活习惯相同的人结婚-本地人相亲', // 分享标题
             link: '//www.geinigejuzichi.top/' + (proxyId ? '?proxyId=' + proxyId : ''), // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: shareItem && shareItem.imgs[0] // 分享图标
           })
           toolkit.wxShare('onMenuShareAppMessage', {
-            title: '找一个风俗习惯相同的人终老-本地人相亲', // 分享标题
+            title: '找一个生活习惯相同的人结婚-本地人相亲', // 分享标题
             desc:
               shareItem &&
-              `年龄:${shareItem.age}, 家乡:${shareItem.province}, 职业:${shareItem.occupation}, 工作地点:${shareItem.workProvince}, 择偶标准:${shareItem.standard}`, // 分享描述
+              `年龄:${shareItem.age}, 家乡:${shareItem.city}, 职业:${shareItem.occupation}, 工作地点:${shareItem.workCity}, 择偶标准:${shareItem.standard}`, // 分享描述
             link: '//www.geinigejuzichi.top/' + (proxyId ? '?proxyId=' + proxyId : ''), // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: shareItem && shareItem.imgs[0]
           })
@@ -240,6 +242,9 @@ export default {
     watch(
       [() => data.type.value, () => data.location.name],
       () => {
+        const sex = data.tabSex === 2 ? 'female' : 'male'
+        data[sex].nextPage = ''
+        data[sex].postList = []
         getPostList()
       },
       { lazy: true }

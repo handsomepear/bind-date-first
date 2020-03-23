@@ -1,6 +1,6 @@
 <template>
-  <div class="title-nav" @click="back" :style="{ color: color || '#fff' }">
-    <van-icon name="arrow-left" size="18" style="margin-right:5px" />{{ name }}
+  <div class="title-nav" :style="{ color: color || '#fff' }">
+    <van-icon name="arrow-left" size="18" style="margin-right:5px" @click="back" />{{ name }}
   </div>
 </template>
 
