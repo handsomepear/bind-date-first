@@ -28,6 +28,12 @@ const routes = [
     name: 'Create',
     meta: { keepAlive: false },
     component: () => import(/* webpackChunkName: "Create" */ '../views/Create/Create.vue')
+  },
+  {
+    path: '/pulic-code',
+    name: 'PublicCode',
+    meta: { keepAlive: true },
+    component: () => import(/* webpackChunkName: "Create" */ '../views/PublicCode/PublicCode.vue')
   }
 ]
 

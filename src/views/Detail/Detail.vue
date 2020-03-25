@@ -68,7 +68,7 @@
       </div>
       <div class="option flex-between-center">
         <!-- 公众号 -->
-        <div class="public-code flex-center">
+        <div class="public-code flex-center" @click="goPublicPage">
           <img src="../../assets/imgs/hongbao.png" alt="" />
           <span>关注公众号，方便下次进入</span>
         </div>
@@ -265,6 +265,10 @@ export default {
       })
     }
 
+    const goPublicPage = () => {
+      router.push({ name: 'PublicCode' })
+    }
+
     return {
       ...toRefs(data),
       shareButtonStyle,
@@ -275,7 +279,8 @@ export default {
       mineCopySuccess,
       onDelete,
       onEdite,
-      onSubmitAccuse
+      onSubmitAccuse,
+      goPublicPage
     }
   }
 }
