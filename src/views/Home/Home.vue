@@ -283,7 +283,7 @@ export default {
     onMounted(() => {
       toolkit.wxConfig()
       data.areaList = areaList
-      const userInfo = window.userInfo || JSON.parse(sessionStorage.getItem('userInfo'))
+      const userInfo = window.userInfo || JSON.parse(localStorage.getItem('userInfo'))
       if (userInfo) {
         const userSex = userInfo.sex
         if (userSex === 1) data.tabSex = 2
@@ -294,8 +294,8 @@ export default {
       } else {
         toolkit.login(resData => {
           window._TOKEN = resData.token
-          sessionStorage.setItem('token', resData.token)
-          sessionStorage.setItem('userInfo', JSON.stringify(resData.user))
+          localStorage.setItem('token', resData.token)
+          localStorage.setItem('userInfo', JSON.stringify(resData.user))
           const userSex = resData.user.sex
           if (userSex === 1) data.tabSex = 2
           if (userSex === 2) data.tabSex = 1

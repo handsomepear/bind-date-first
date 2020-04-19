@@ -21,7 +21,6 @@ const toolkit = {
   login(success, fail) {
     const requestParams = this.getRequest()
     const proxyId = requestParams.proxyId
-    localStorage.clear()
     // 保存 proxyId ，在分享的时候需要使用
     proxyId && sessionStorage.setItem('proxyId', proxyId)
 
