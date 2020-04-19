@@ -101,6 +101,8 @@ export default {
   position: relative;
   margin: 0 8px 8px 0;
   .img-con {
+    display: flex;
+    align-items: center;
     width: 80px;
     height: 80px;
     border-radius: 8px;
@@ -108,7 +110,6 @@ export default {
   }
   img {
     width: 100%;
-    height: 100%;
   }
   .van-icon {
     position: absolute;

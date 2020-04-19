@@ -162,8 +162,8 @@ export default {
       },
       location: {
         name: '',
-        province: '',
-        city: ''
+        province: '全部',
+        city: '全部'
       },
       isShowType: false,
       isShowAreaPanel: false,
@@ -194,7 +194,8 @@ export default {
           name: '工作地点',
           value: 2
         }
-      ]
+      ],
+      locationCode: ''
     })
 
     const getPostList = () => {
@@ -247,54 +248,58 @@ export default {
         data[sex].postList = []
         getPostList()
       },
-      { lazy: true }
+      { immediate: true }
     )
 
-    const locationSlice = name => {
-      if (name.indexOf('市') > -1 || name.indexOf('省') > -1) {
-        return name.slice(0, name.length - 1)
-      }
-      return name
-    }
+    // const locationSlice = name => {
+    //   if (name.indexOf('市') > -1 || name.indexOf('省') > -1) {
+    //     return name.slice(0, name.length - 1)
+    //   }
+    //   return name
+    // }
 
-    const getLocationAndList = () => {
-      toolkit.getLocationFromBidu(position => {
-        const address = position.addressComponents
-        const province = locationSlice(address.province)
-        const city = locationSlice(address.city)
-        // streetNumber: "3号"
-        // street: "中关村北一条"
-        // district: "海淀区"
-        // city: "北京市"
-        // province: "北京市"
-        data.location = {
-          name: `${province}-${city}`,
-          province: province || '北京',
-          city: city || '北京'
-        }
-      })
-    }
+    // const getLocationAndList = () => {
+    //   const location = localStorage.getItem('location')
+    //   if (location) {
+    //     return (data.location = location)
+    //   }
+    //   toolkit.getLocationFromBidu(position => {
+    //     const address = position.addressComponents
+    //     const province = locationSlice(address.province)
+    //     const city = locationSlice(address.city)
+    //     // streetNumber: "3号"
+    //     // street: "中关村北一条"
+    //     // district: "海淀区"
+    //     // city: "北京市"
+    //     // province: "北京市"
+    //     data.location = {
+    //       name: `${province}-${city}`,
+    //       province: province || '北京',
+    //       city: city || '北京'
+    //     }
+    //   })
+    // }
 
     onMounted(() => {
       toolkit.wxConfig()
       data.areaList = areaList
-      const userInfo = window.userInfo || JSON.parse(localStorage.getItem('userInfo'))
+      const userInfo = window.userInfo || JSON.parse(sessionStorage.getItem('userInfo'))
       if (userInfo) {
         const userSex = userInfo.sex
         if (userSex === 1) data.tabSex = 2
         if (userSex === 2) data.tabSex = 1
         if (userSex === 0) data.tabSex = 1
-        getLocationAndList()
+        // getLocationAndList()
       } else {
         toolkit.login(resData => {
           window._TOKEN = resData.token
-          localStorage.setItem('token', resData.token)
-          localStorage.setItem('userInfo', JSON.stringify(resData.user))
+          sessionStorage.setItem('token', resData.token)
+          sessionStorage.setItem('userInfo', JSON.stringify(resData.user))
           const userSex = resData.user.sex
           if (userSex === 1) data.tabSex = 2
           if (userSex === 2) data.tabSex = 1
           if (userSex === 0) data.tabSex = 1
-          getLocationAndList()
+          // getLocationAndList()
         })
       }
     })

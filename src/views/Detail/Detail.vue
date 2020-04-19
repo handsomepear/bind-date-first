@@ -158,7 +158,7 @@ export default {
       }).then(({ data: resData }) => {
         data.postDetail = resData.post
         const proxyId = sessionStorage.getItem('proxyId')
-        const userId = JSON.parse(localStorage.getItem('userInfo')).id
+        const userId = JSON.parse(sessionStorage.getItem('userInfo')).id
         if (userId === data.postDetail.userId) {
           data.canEdite = true
         }

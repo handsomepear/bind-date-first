@@ -19,12 +19,8 @@ module.exports = {
      * 配置了这一项之后 就不需要再 install 对应的库了， 只需要引入在这里设置的别名 也就是 key 值就可以了
      */
     config.externals = {
-      vue: 'Vue',
-      'vue-router': 'VueRouter',
-      vant: 'vant',
       wx: 'wx',
-      qiniu: 'qiniu',
-      axios: 'axios'
+      qiniu: 'qiniu'
     }
     // if (process.env.NODE_ENV === 'production') {
     //   return {

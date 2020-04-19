@@ -33,7 +33,7 @@ const routes = [
     path: '/pulic-code',
     name: 'PublicCode',
     meta: { keepAlive: true },
-    component: () => import(/* webpackChunkName: "Create" */ '../views/PublicCode/PublicCode.vue')
+    component: () => import(/* webpackChunkName: "PublicCode" */ '../views/PublicCode/PublicCode.vue')
   }
 ]
 

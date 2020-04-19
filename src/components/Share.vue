@@ -1,7 +1,7 @@
 <template>
   <!-- 分享 -->
   <div class="share-com">
-    <div :class="['share-button', size]" :style="style" @click="onShowShareTips">
+    <div :class="['share-button', size]" @click="onShowShareTips">
       <div class="share-img">
         <img src="../assets/imgs/share.png" alt="" />
       </div>

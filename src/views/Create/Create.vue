@@ -211,7 +211,7 @@ export default {
         province: postDetail.province,
         city: postDetail.city
       }
-      data.sex = { name: ['', '男', '女'][postDetail.sex], code: postDetail.sex }
+      data.sex = { name: ['', '男', '女'][postDetail.sex], value: postDetail.sex }
       data.job = postDetail.occupation
       data.workplace = {
         name: postDetail.workProvince + '-' + postDetail.workCity,
@@ -229,6 +229,8 @@ export default {
       toolkit.wxConfig()
       data.areaList = areaList
       const formData = route.params.formData ? JSON.parse(route.params.formData) : null
+      // eslint-disable-next-line no-console
+      console.log(formData)
 
       if (formData) {
         initData(formData.postDetail)
@@ -314,6 +316,8 @@ export default {
       }
       $loading.show()
       if (data.isEdite) {
+        // eslint-disable-next-line no-console
+        console.log(data.sex)
         updatePostApi({
           post: {
             id: data.updatePostId,

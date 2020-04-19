@@ -10,11 +10,38 @@ import Clipboard from 'vue-clipboard2'
 import 'lib-flexible'
 
 import '@/assets/css/common.less'
-import vant from 'vant'
+import {
+  Loading,
+  Icon,
+  Form,
+  Field,
+  Cell,
+  ActionSheet,
+  Popup,
+  Picker,
+  Area,
+  Swipe,
+  SwipeItem,
+  Overlay,
+  List
+} from 'vant'
 
 import loading from './plugins/loading'
 
-Vue.use(vant)
+Vue.use(Loading)
+  .use(Icon)
+  .use(Form)
+  .use(Field)
+  .use(Cell)
+  .use(ActionSheet)
+  .use(Popup)
+  .use(Picker)
+  .use(Area)
+  .use(Picker)
+  .use(Swipe)
+  .use(SwipeItem)
+  .use(Overlay)
+  .use(List)
 Vue.use(VueCompositionApi)
 Vue.use(Clipboard)
 Vue.use(loading)

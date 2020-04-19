@@ -7,7 +7,7 @@ const service = axios.create({
 
 // 请求配置
 service.interceptors.request.use(config => {
-  const token = localStorage.getItem('token')
+  const token = sessionStorage.getItem('token')
   config.method = 'POST'
   config.headers['Content-Type'] = 'application/json'
   if (token) {
@@ -27,7 +27,7 @@ service.interceptors.response.use(
       }
       if (response.data.errCode === -1) {
         // 未登录
-        localStorage.removeItem('token')
+        sessionStorage.removeItem('token')
         window.location.reload()
       }
       return Promise.reject(response)

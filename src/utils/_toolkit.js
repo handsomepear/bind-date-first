@@ -90,22 +90,20 @@ const toolkit = {
   },
   wxPay(params) {
     wx.chooseWXPay(params)
-  },
-  // 根据百度地图获取定位城市
-  getLocationFromBidu(positionCb) {
-    // const geolocation = new window.BMap.Geolocation()
-    // geolocation.getCurrentPosition(positionSucess, positionFail)
-    wx.ready(() => {
-      wx.getLocation({
-        type: 'wgs84',
-        success: res => {
-          const point = new window.BMap.Point(res.longitude, res.latitude)
-          const gc = new window.BMap.Geocoder()
-          gc.getLocation(point, positionCb)
-        }
-      })
-    })
   }
+  // 根据百度地图获取定位城市
+  // getLocationFromBidu(positionCb) {
+  // wx.ready(() => {
+  //   wx.getLocation({
+  //     type: 'wgs84',
+  //     success: res => {
+  //       const point = new window.BMap.Point(res.longitude, res.latitude)
+  //       const gc = new window.BMap.Geocoder()
+  //       gc.getLocation(point, positionCb)
+  //     }
+  //   })
+  // })
+  // }
 }
 
 export default toolkit
