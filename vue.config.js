@@ -18,10 +18,7 @@ module.exports = {
      * value: 是js文件中导出的变量名
      * 配置了这一项之后 就不需要再 install 对应的库了， 只需要引入在这里设置的别名 也就是 key 值就可以了
      */
-    config.externals = {
-      wx: 'wx',
-      qiniu: 'qiniu'
-    }
+    config.externals = {}
     // if (process.env.NODE_ENV === 'production') {
     //   return {
     //     plugins: [

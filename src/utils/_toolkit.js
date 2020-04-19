@@ -1,10 +1,9 @@
 import request from './_axios.conf'
 import _env from './_ENV'
-import wx from 'wx'
+import wx from 'weixin-js-sdk'
 const toolkit = {
   data: {
-    appId: _env.appId,
-    appSecret: '5af8f79d6ab703c0aec8f5e7c2506f58'
+    appId: _env.appId
   },
   getRequest() {
     const url = location.search //获取url中"?"符后的字串
@@ -22,13 +21,15 @@ const toolkit = {
   login(success, fail) {
     const requestParams = this.getRequest()
     const proxyId = requestParams.proxyId
+    localStorage.clear()
     // 保存 proxyId ，在分享的时候需要使用
     proxyId && sessionStorage.setItem('proxyId', proxyId)
+
     // code 已经拿到
     if (requestParams.code) {
       request({
         url: '/login',
-        data: { code: requestParams.code, proxyId: proxyId || null }
+        data: { code: requestParams.code, proxyId: proxyId || '' }
       })
         .then(({ data }) => {
           success && success(data)
@@ -37,7 +38,7 @@ const toolkit = {
           fail && fail(err)
         })
     } else {
-      let url = window.location.href.replace('empty', 'index')
+      let url = window.location.href
       window.location.href =
         'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' +
         this.data.appId +

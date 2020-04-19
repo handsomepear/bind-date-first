@@ -1,4 +1,4 @@
-import * as qiniu from 'qiniu'
+import * as qiniu from 'qiniu-js'
 import axios from 'axios'
 import ENV from './_ENV'
 

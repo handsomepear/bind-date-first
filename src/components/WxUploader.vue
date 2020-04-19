@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import wx from 'wx'
+import wx from 'weixin-js-sdk'
 import fileUpload from '../utils/_qiniu'
 export default {
   props: {

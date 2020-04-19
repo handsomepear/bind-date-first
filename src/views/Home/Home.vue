@@ -248,7 +248,7 @@ export default {
         data[sex].postList = []
         getPostList()
       },
-      { immediate: true }
+      { lazy: true }
     )
 
     // const locationSlice = name => {
@@ -290,6 +290,7 @@ export default {
         if (userSex === 2) data.tabSex = 1
         if (userSex === 0) data.tabSex = 1
         // getLocationAndList()
+        getPostList()
       } else {
         toolkit.login(resData => {
           window._TOKEN = resData.token
@@ -300,6 +301,7 @@ export default {
           if (userSex === 2) data.tabSex = 1
           if (userSex === 0) data.tabSex = 1
           // getLocationAndList()
+          getPostList()
         })
       }
     })

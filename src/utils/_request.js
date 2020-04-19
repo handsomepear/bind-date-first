@@ -5,21 +5,27 @@ function fetch(params) {
   const token = sessionStorage.getItem('token') || window._TOKEN
   if (!token) {
     return new Promise((resolve, reject) => {
-      toolkit.login(data => {
-        window._TOKEN = data.token
-        sessionStorage.setItem('token', data.token)
-        sessionStorage.setItem('userInfo', JSON.stringify(data.user))
-        request({
-          url: params.url || '',
-          data: { ...params.data }
-        })
-          .then(res => {
-            resolve(res)
+      toolkit.login(
+        data => {
+          window._TOKEN = data.token
+          sessionStorage.setItem('token', data.token)
+          sessionStorage.setItem('userInfo', JSON.stringify(data.user))
+          request({
+            url: params.url || '',
+            data: { ...params.data }
           })
-          .catch(err => {
-            reject(err)
-          })
-      })
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              reject(err)
+            })
+        },
+        () => {
+          // eslint-disable-next-line no-console
+          console.log('登录失败')
+        }
+      )
     })
   } else {
     return new Promise((resolve, reject) => {
