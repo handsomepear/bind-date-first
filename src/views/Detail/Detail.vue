@@ -156,9 +156,9 @@ export default {
       getPostDetailApi({
         id: route.params.postId
       }).then(({ data: resData }) => {
-        data.postDetail = resData.post
+        data.postDetail = resData.post·
         const proxyId = sessionStorage.getItem('proxyId')
-        const userId = JSON.parse(sessionStorage.getItem('userInfo')).id
+        const userId = JSON.parse(localStorage.getItem('userInfo')).id
         if (userId === data.postDetail.userId) {
           data.canEdite = true
         }
