@@ -23,9 +23,15 @@ const toolkit = {
     const proxyId = requestParams.proxyId
     // 保存 proxyId ，在分享的时候需要使用
     proxyId && sessionStorage.setItem('proxyId', proxyId)
-
+    let url = window.location.href
+    const start = url.indexOf('?')
+    const end = url.lastIndexOf('#')
+    start > -1 && (url = url.slice(0, start) + url.slice(end))
     // code 已经拿到
     if (requestParams.code) {
+      // 记录登录次数 如果超过两次则取消请求表示登录失败 退出重新进入
+      let loginCount = sessionStorage.getItem('loginCount') || 0
+      sessionStorage.setItem('loginCount', ++loginCount)
       request({
         url: '/login',
         data: { code: requestParams.code, proxyId: proxyId || '' }
@@ -34,10 +40,12 @@ const toolkit = {
           success && success(data)
         })
         .catch(err => {
+          window.location.href = url
           fail && fail(err)
         })
     } else {
-      let url = window.location.href
+      // eslint-disable-next-line no-console
+      console.log(url)
       window.location.href =
         'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' +
         this.data.appId +

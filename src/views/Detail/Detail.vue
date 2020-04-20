@@ -159,7 +159,7 @@ export default {
         data.postDetail = resData.post
         const proxyId = sessionStorage.getItem('proxyId')
         const userId = JSON.parse(localStorage.getItem('userInfo')).id
-        if (userId === data.postDetail.userId) {
+        if (data.postDetail.userId && userId === data.postDetail.userId) {
           data.canEdite = true
         }
         toolkit.wxShare('onMenuShareTimeline', {

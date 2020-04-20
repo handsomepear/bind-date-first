@@ -1,15 +1,19 @@
 import axios from 'axios'
 import ENV from './_ENV'
+import { Toast } from 'vant'
 const service = axios.create({
   baseURL: ENV.baseURL,
   timeout: 15000
 })
 
+const CancelToken = axios.CancelToken
+const source = CancelToken.source()
 // 请求配置
 service.interceptors.request.use(config => {
   const token = localStorage.getItem('token')
   config.method = 'POST'
   config.headers['Content-Type'] = 'application/json'
+  config.cancelToken = source.token
   if (token) {
     config.data = {
       token,
@@ -27,13 +31,23 @@ service.interceptors.response.use(
       }
       if (response.data.errCode === -1) {
         // 未登录
-        sessionStorage.removeItem('token')
+        localStorage.removeItem('token')
+        // 如果登录次数大于 1 次
+        if (sessionStorage.getItem('loginCount') >= 2) {
+          Toast.fail('登录失败，请退出重新进入')
+          sessionStorage.removeItem('loginCount')
+          return source.cancel()
+        }
         window.location.reload()
       }
       return Promise.reject(response)
     }
   },
   err => {
+    if (axios.isCancel(err)) {
+      // 取消请求的情况下 中断Promise 调用链
+      return new Promise(() => {})
+    }
     return Promise.reject(err)
   }
 )
