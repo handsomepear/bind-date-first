@@ -85,7 +85,8 @@ const toolkit = {
           'getLocation',
           'chooseWXPay',
           'chooseImage',
-          'uploadImage'
+          'uploadImage',
+          'getLocalImgData'
         ] // 必填，需要使用的JS接口列表
       })
     })

@@ -27,9 +27,15 @@ export default {
       default: 9
     }
   },
+  data() {
+    return {
+      previewImg: []
+    }
+  },
   methods: {
     upload() {
       const _this = this
+      this.previewImg = []
       wx.chooseImage({
         count: this.max - this.photos.length, // 默认9
         sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
@@ -37,39 +43,54 @@ export default {
         success: function(res) {
           _this.$loading.show()
           var localIds = res.localIds // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
-          localIds.forEach(localId => {
-            wx.getLocalImgData({
-              localId,
-              success(res) {
-                var localData = res.localData
-                if (localData.indexOf('data:image') != 0) {
-                  //判断是否有这样的头部
-                  localData = 'data:image/jpeg;base64,' + localData
-                }
-                localData = localData.replace(/\r|\n/g, '').replace('data:image/jgp', 'data:image/jpeg')
-                //第一个替换的是换行符，第二个替换的是图片类型，因为在IOS机上测试时看到它的图片类型时jgp，
-                //这不知道时什么格式的图片，为了兼容其他设备就把它转为jpeg
-                const fileBlob = _this.dataURLtoBlob(localData)
-                fileUpload(
-                  fileBlob,
-                  function(img) {
-                    let photos = _this.photos.slice(0)
-                    photos.push(img)
-                    _this.$emit('getPhotos', photos)
-                    _this.$loading.hide()
-                  },
-                  function() {
-                    _this.$loading.hide()
-                    _this.$tast('上传失败,请稍后重试')
-                  }
-                )
-              },
-              fail() {
-                _this.$loading.hide()
-              }
-            })
-          })
+          _this.getLocalImgs(localIds)
         }
+      })
+    },
+    async getLocalImgs(localIds) {
+      const _this = this
+      for (let index = 0; index < localIds.length; index++) {
+        const localId = localIds[index]
+        await this.readImgs(localId)
+      }
+      this.previewImg.forEach(imgBlob => {
+        fileUpload(
+          imgBlob,
+          function(img) {
+            let photos = _this.photos.slice(0)
+            photos.push(img)
+            _this.$emit('getPhotos', photos)
+            _this.$loading.hide()
+          },
+          function() {
+            _this.$loading.hide()
+            _this.$tast('上传失败,请稍后重试')
+          }
+        )
+      })
+    },
+    readImgs(item) {
+      let _this = this
+      return new Promise(resolve => {
+        wx.getLocalImgData({
+          localId: item,
+          success: function(res) {
+            let localData = res.localData
+            if (localData.indexOf('data:image') != 0) {
+              //判断是否有这样的头部
+              localData = 'data:image/jpeg;base64,' + localData
+            }
+            localData = localData.replace(/\r|\n/g, '').replace('data:image/jgp', 'data:image/jpeg')
+            // 第一个替换的是换行符，第二个替换的是图片类型，因为在IOS机上测试时看到它的图片类型时jgp，
+            //这不知道时什么格式的图片，为了兼容其他设备就把它转为jpeg
+            const fileBlob = _this.dataURLtoBlob(localData)
+            _this.previewImg.push(fileBlob)
+            resolve('done!')
+          },
+          fail: function() {
+            _this.$toast('选取多张图片失败')
+          }
+        })
       })
     },
     deletePhoto(index) {
