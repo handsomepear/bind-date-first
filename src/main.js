@@ -23,7 +23,8 @@ import {
   Swipe,
   SwipeItem,
   Overlay,
-  List
+  List,
+  Dialog
 } from 'vant'
 
 import loading from './plugins/loading'
@@ -42,6 +43,7 @@ Vue.use(Loading)
   .use(SwipeItem)
   .use(Overlay)
   .use(List)
+  .use(Dialog)
 Vue.use(VueCompositionApi)
 Vue.use(Clipboard)
 Vue.use(loading)
