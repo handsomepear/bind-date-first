@@ -1,6 +1,7 @@
 import request from './_axios.conf'
 import _env from './_ENV'
 import wx from 'weixin-js-sdk'
+
 const toolkit = {
   data: {
     appId: _env.appId
@@ -24,9 +25,11 @@ const toolkit = {
     // 保存 proxyId ，在分享的时候需要使用
     proxyId && sessionStorage.setItem('proxyId', proxyId)
     let url = window.location.href
-    const start = url.indexOf('?')
-    const end = url.lastIndexOf('#')
-    start > -1 && (url = url.slice(0, start) + url.slice(end))
+    const codeStr = url.match(/[?&]code=\w+&state=\w+/g)
+    // 截取一下微信重定向加的参数 避免多次使用当前的 code
+    if (codeStr) {
+      url = url.replace(codeStr, '')
+    }
     // code 已经拿到
     if (requestParams.code) {
       // 记录登录次数 如果超过两次则取消请求表示登录失败 退出重新进入

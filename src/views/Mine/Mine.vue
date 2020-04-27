@@ -5,7 +5,7 @@
       <div class="avatar">
         <img :src="userInfo.headUrl" alt="" />
       </div>
-      <div class="nickname">{{ userInfo.nickName }}</div>
+      <div class="nickname" v-html="userInfo.nickName"></div>
     </section>
     <section class="created">
       <h2>我创建的</h2>
