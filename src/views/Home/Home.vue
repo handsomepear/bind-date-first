@@ -39,7 +39,7 @@
             <div class="photo-box" v-for="(photoItem, photoIndex) in item.imgs.slice(0, 6)" :key="photoIndex">
               <img :src="photoItem + '?imageslim'" alt="" />
             </div>
-            <div class="photo-box last"></div>
+            <div class="photo-box last van-photo-last"></div>
           </div>
           <!-- bottom -->
           <div class="item-bottom flex-box flex-between-center">
@@ -86,7 +86,7 @@
               <img :src="photoItem + '?imageslim'" alt="" />
             </div>
             <!-- 占位：避免 space-between 导致图片不连续排列 -->
-            <div class="photo-box last"></div>
+            <div class="photo-box last van-photo-last"></div>
           </div>
           <!-- bottom -->
           <div class="item-bottom flex-box flex-between-center">

@@ -7,8 +7,6 @@ import Clipboard from 'vue-clipboard2'
 // 根据环境使用mockjs
 // process.env.NODE_ENV === 'development' && require('./mock/mock.js')
 
-import 'lib-flexible'
-
 import '@/assets/css/common.less'
 import {
   Loading,
