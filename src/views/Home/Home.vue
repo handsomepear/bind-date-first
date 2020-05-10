@@ -219,7 +219,8 @@ export default {
           if (!resData.list || resData.list.length < 5) {
             data[sex].finished = true // 控制列表是否加载完毕
           }
-          const shareItem = data[sex].postList[0]
+          // 女生列表有数据就选女生 否则选男生
+          const shareItem = data['female'].postList[0] || data['male'].postList[0]
           const proxyId = sessionStorage.getItem('proxyId')
           toolkit.wxShare('onMenuShareTimeline', {
             title: '找一个生活习惯相同的人结婚-本地人相亲', // 分享标题
