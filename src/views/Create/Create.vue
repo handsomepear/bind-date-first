@@ -37,17 +37,7 @@
         @click="isShowHomePicker = true"
       />
       <van-field v-model="job" maxlength="8" name="job" label="职业:" placeholder="请输入" input-align="right" />
-      <van-field
-        v-model="education"
-        name="education"
-        label="学历:"
-        placeholder="请选择"
-        input-align="right"
-        right-icon="arrow"
-        clickable
-        readonly
-        @click="isShowEducationPicker = true"
-      />
+      <van-field v-model="education" name="education" label="学校:" placeholder="请输入" input-align="right" />
       <van-field
         v-model="workplace.name"
         name="workplace"

@@ -8,7 +8,7 @@ module.exports = {
     disableHostCheck: true,
     proxy: {
       '/': {
-        target: 'https://www.geinigejuzichi.top/api_server/'
+        target: 'https://www.geinigejuzichi.top/api'
       }
     }
   },
@@ -33,7 +33,7 @@ module.exports = {
   },
   publicPath: process.env.NODE_ENV === 'production' ? '' : process.env.NODE_ENV === 'alpha' ? '/' : '/',
   assetsDir: assetsDir,
-  outputDir: process.env.NODE_ENV === 'production' ? 'dist' : process.env.NODE_ENV === 'alpha' ? 'test' : 'dist',
+  outputDir: process.env.NODE_ENV === 'production' ? 'first' : process.env.NODE_ENV === 'alpha' ? 'test' : 'first',
   pluginOptions: {
     'style-resources-loader': {
       preProcessor: 'less',

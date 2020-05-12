@@ -13,7 +13,7 @@ switch (process.env.NODE_ENV) {
     _env.appId = 'wx22b46902345f4258'
     break
   case 'production':
-    _env.baseURL = '/api_server'
+    _env.baseURL = '/api'
     _env.appId = 'wx22b46902345f4258'
     break
 }

@@ -50,8 +50,9 @@ export default {
   width: 147.5px;
   height: 44px;
   color: #333;
-  box-shadow: 0px 1.5px 3px 0px rgba(37, 211, 207, 0.2);
-  background: linear-gradient(0deg, rgba(187, 255, 253, 1), rgba(237, 255, 255, 1));
+  // box-shadow: 0px 1.5px 3px 0px rgba(37, 211, 207, 0.2);
+  background: linear-gradient(to bottom, #ffc058, #ff9372);
+  color: #fff;
 
   &.small,
   &.medium {
@@ -71,9 +72,10 @@ export default {
   height: 21px;
   justify-content: center;
   align-items: center;
-  background-color: #25d4d0;
+  background-color: #fff;
   border-radius: 5px;
   margin-right: 3px;
+
   img {
     width: 14px;
     height: 14px;

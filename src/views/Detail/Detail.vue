@@ -237,6 +237,8 @@ export default {
     const onDelete = () => {
       Dialog.confirm({
         message: '确定要删除该相亲帖吗？',
+        cancelButtonColor: '#9463f7',
+        confirmButtonColor: '#666666',
         cancel: () => {}
       })
         .then(() => {

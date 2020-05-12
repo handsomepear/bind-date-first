@@ -1,6 +1,14 @@
 <template>
   <div class="home-page">
     <section class="main">
+      <section class="tab-list">
+        <div :class="['tab-item flex-box flex-center', tabSex === 2 ? 'choosed' : '']" @click="onChooseTab(2)">
+          女生
+        </div>
+        <div :class="['tab-item flex-box flex-center', tabSex === 1 ? 'choosed' : '']" @click="onChooseTab(1)">
+          男生
+        </div>
+      </section>
       <!-- 列表 -->
       <van-list
         v-show="tabSex === 2"
@@ -103,14 +111,14 @@
         <div class="area-type" @click="isShowType = true">{{ type.name }} <van-icon name="arrow-down" /></div>
         <div class="area-type" @click="isShowAreaPanel = true">{{ location.city }}<van-icon name="arrow-down" /></div>
       </div>
-      <section class="tab-list">
+      <!-- <section class="tab-list">
         <div :class="['tab-item flex-box flex-center', tabSex === 2 ? 'choosed' : '']" @click="onChooseTab(2)">
           女生
         </div>
         <div :class="['tab-item flex-box flex-center', tabSex === 1 ? 'choosed' : '']" @click="onChooseTab(1)">
           男生
         </div>
-      </section>
+      </section> -->
     </section>
     <section class="bottom-options flex-box flex-between-center">
       <!-- 创建相亲贴 -->
