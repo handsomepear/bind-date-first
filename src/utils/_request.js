@@ -2,14 +2,14 @@ import request from './_axios.conf'
 import toolkit from './_toolkit'
 
 function fetch(params) {
-  const token = localStorage.getItem('token') || window._TOKEN
+  const token = localStorage.getItem('firstToken') || window._TOKEN
   if (!token) {
     return new Promise((resolve, reject) => {
       toolkit.login(
         data => {
           window._TOKEN = data.token
-          localStorage.setItem('token', data.token)
-          localStorage.setItem('userInfo', JSON.stringify(data.user))
+          localStorage.setItem('firstToken', data.token)
+          localStorage.setItem('firstUserInfo', JSON.stringify(data.user))
           request({
             url: params.url || '',
             data: { ...params.data }

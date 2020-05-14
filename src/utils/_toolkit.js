@@ -23,7 +23,7 @@ const toolkit = {
     const requestParams = this.getRequest()
     const proxyId = requestParams.proxyId
     // 保存 proxyId ，在分享的时候需要使用
-    proxyId && sessionStorage.setItem('proxyId', proxyId)
+    proxyId && sessionStorage.setItem('firstProxyId', proxyId)
     let url = window.location.href
     const codeStr = url.match(/[?&]code=\w+&state=\w+/g)
     // 截取一下微信重定向加的参数 避免多次使用当前的 code
@@ -33,8 +33,8 @@ const toolkit = {
     // code 已经拿到
     if (requestParams.code) {
       // 记录登录次数 如果超过两次则取消请求表示登录失败 退出重新进入
-      let loginCount = sessionStorage.getItem('loginCount') || 0
-      sessionStorage.setItem('loginCount', ++loginCount)
+      let loginCount = sessionStorage.getItem('firstLoginCount') || 0
+      sessionStorage.setItem('firstLoginCount', ++loginCount)
       request({
         url: '/login',
         data: { code: requestParams.code, proxyId: proxyId || '' }

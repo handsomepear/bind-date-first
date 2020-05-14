@@ -114,11 +114,11 @@
         @cancel="isShowWorkplacePicker = false"
       />
     </van-popup>
-    <!-- 学历选择 -->
+    <!-- 学校选择 -->
     <van-popup v-model="isShowEducationPicker" position="bottom">
       <van-picker
         show-toolbar
-        title="学历选择"
+        title="学校选择"
         :columns="educationList"
         @cancel="isShowEducationPicker = false"
         @confirm="onSelectEducation"
@@ -173,7 +173,7 @@ export default {
         city: ''
       }, // 家乡
       job: '', // 工作
-      education: '', // 学历
+      education: '', // 学校
       workplace: {
         name: '',
         code: '',
@@ -287,7 +287,7 @@ export default {
         return Toast('请填写职业信息')
       }
       if (!values.education) {
-        return Toast('请填写学历信息')
+        return Toast('请填写学校信息')
       }
       if (!values.mineWx) {
         return Toast('请填写本人微信')

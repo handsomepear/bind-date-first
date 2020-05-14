@@ -10,7 +10,7 @@ const CancelToken = axios.CancelToken
 const source = CancelToken.source()
 // 请求配置
 service.interceptors.request.use(config => {
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('firstToken')
   config.method = 'POST'
   config.headers['Content-Type'] = 'application/json'
   config.cancelToken = source.token
@@ -31,11 +31,11 @@ service.interceptors.response.use(
       }
       if (response.data.errCode === -1) {
         // 未登录
-        localStorage.removeItem('token')
+        localStorage.removeItem('firstToken')
         // 如果登录次数大于 1 次
-        if (sessionStorage.getItem('loginCount') >= 2) {
+        if (sessionStorage.getItem('firstLoginCount') >= 2) {
           Toast.fail('登录失败，请退出重新进入')
-          sessionStorage.removeItem('loginCount')
+          sessionStorage.removeItem('firstLoginCount')
           return source.cancel()
         }
         window.location.reload()

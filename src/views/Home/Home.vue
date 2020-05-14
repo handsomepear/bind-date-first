@@ -29,7 +29,7 @@
             <div>
               <span>
                 职业:{{ item.occupation }} <span class="vertical-line">|</span> 工作地点:{{ item.workCity }}
-                <span class="vertical-line">|</span> 学历:
+                <span class="vertical-line">|</span> 学校:
                 {{ item.educational }}
               </span>
             </div>
@@ -75,7 +75,7 @@
             <div>
               <span>
                 职业:{{ item.occupation }} <span class="vertical-line">|</span> 工作地点:{{ item.workCity }}
-                <span class="vertical-line">|</span> 学历:
+                <span class="vertical-line">|</span> 学校:
                 {{ item.educational }}
               </span>
             </div>
@@ -229,18 +229,18 @@ export default {
           }
           // 女生列表有数据就选女生 否则选男生
           const shareItem = data['female'].postList[0] || data['male'].postList[0]
-          const proxyId = sessionStorage.getItem('proxyId')
+          const proxyId = sessionStorage.getItem('firstProxyId')
           toolkit.wxShare('onMenuShareTimeline', {
-            title: '找一个生活习惯相同的人结婚-本地人相亲', // 分享标题
-            link: location.protocol + '//www.geinigejuzichi.top/' + (proxyId ? '?proxyId=' + proxyId : ''), // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            title: '找一个三观相近的人结婚-寻一人终老', // 分享标题
+            link: location.protocol + '//www.geinigejuzichi.top/first' + (proxyId ? '?proxyId=' + proxyId : ''), // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: shareItem && shareItem.imgs[0] // 分享图标
           })
           toolkit.wxShare('onMenuShareAppMessage', {
-            title: '找一个生活习惯相同的人结婚-本地人相亲', // 分享标题
+            title: '找一个三观相近的人结婚-寻一人终老', // 分享标题
             desc:
               shareItem &&
               `年龄:${shareItem.age}, 家乡:${shareItem.city}, 职业:${shareItem.occupation}, 工作地点:${shareItem.workCity}, 择偶标准:${shareItem.standard}`, // 分享描述
-            link: location.protocol + '//www.geinigejuzichi.top/' + (proxyId ? '?proxyId=' + proxyId : ''), // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            link: location.protocol + '//www.geinigejuzichi.top/first' + (proxyId ? '?proxyId=' + proxyId : ''), // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: shareItem && shareItem.imgs[0]
           })
         })
@@ -292,7 +292,7 @@ export default {
     onMounted(() => {
       toolkit.wxConfig()
       data.areaList = areaList
-      const userInfo = window.userInfo || JSON.parse(localStorage.getItem('userInfo'))
+      const userInfo = window.userInfo || JSON.parse(localStorage.getItem('firstUserInfo'))
       if (userInfo) {
         const userSex = userInfo.sex
         if (userSex === 1) data.tabSex = 2
@@ -303,8 +303,8 @@ export default {
       } else {
         toolkit.login(resData => {
           window._TOKEN = resData.token
-          localStorage.setItem('token', resData.token)
-          localStorage.setItem('userInfo', JSON.stringify(resData.user))
+          localStorage.setItem('firstToken', resData.token)
+          localStorage.setItem('firstUserInfo', JSON.stringify(resData.user))
           const userSex = resData.user.sex
           if (userSex === 1) data.tabSex = 2
           if (userSex === 2) data.tabSex = 1

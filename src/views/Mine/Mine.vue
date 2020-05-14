@@ -17,7 +17,7 @@
               <span>年龄:{{ item.age }}岁 | 哪里人:{{ item.province }}</span>
             </div>
             <div>
-              <span>职业:{{ item.occupation }} | 现居:{{ item.workProvince }} | 学历:{{ item.educational }}</span>
+              <span>职业:{{ item.occupation }} | 现居:{{ item.workProvince }} | 学校:{{ item.educational }}</span>
             </div>
           </div>
           <van-icon name="arrow" size="17" />
@@ -34,7 +34,7 @@
               <span>年龄:{{ item.age }}岁 | 哪里人:{{ item.province }}</span>
             </div>
             <div>
-              <span>职业:{{ item.occupation }} | 现居:{{ item.workProvince }} | 学历:{{ item.educational }}</span>
+              <span>职业:{{ item.occupation }} | 现居:{{ item.workProvince }} | 学校:{{ item.educational }}</span>
             </div>
           </div>
           <van-icon name="arrow" size="17" />
