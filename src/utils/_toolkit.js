@@ -37,7 +37,7 @@ const toolkit = {
       sessionStorage.setItem('firstLoginCount', ++loginCount)
       request({
         url: '/login',
-        data: { code: requestParams.code, proxyId: proxyId || '' }
+        data: { code: requestParams.code, proxyId: parseInt(proxyId) || '' }
       })
         .then(({ data }) => {
           success && success(data)
