@@ -133,6 +133,7 @@ export default {
     const route = context.root.$route // 拿参数信息
     const Toast = context.root.$toast
     const Dialog = context.root.$dialog
+    const Loading = context.root.$loading
     const data = reactive({
       current: 0,
       isShowPayModal: false, // 是否展示支付弹窗
@@ -157,30 +158,27 @@ export default {
         id: route.params.postId
       }).then(({ data: resData }) => {
         data.postDetail = resData.post
-        const proxyId = sessionStorage.getItem('firstProxyId')
-        const userId = JSON.parse(localStorage.getItem('firstUserInfo')).id
+        const userInfo = JSON.parse(localStorage.getItem('firstUserInfo'))
+        const userId = userInfo.id
+        const proxyId = userInfo.proxyId
         if (data.postDetail.userId && userId === data.postDetail.userId) {
           data.canEdite = true
         }
+        const shareLink =
+          location.protocol +
+          '//www.geinigejuzichi.top/first/' +
+          (proxyId ? '?proxyId=' + proxyId : '') +
+          '#/detail/' +
+          route.params.postId
         toolkit.wxShare('onMenuShareTimeline', {
           title: '找一个三观相近的人结婚-寻一人终老', // 分享标题
-          link:
-            location.protocol +
-            '//www.geinigejuzichi.top/first/' +
-            (proxyId ? '?proxyId=' + proxyId : '') +
-            '#/detail/' +
-            route.params.postId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          link: shareLink, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
           imgUrl: data.postDetail.imgs[0] // 分享图标
         })
         toolkit.wxShare('onMenuShareAppMessage', {
           title: '找一个三观相近的人结婚-寻一人终老', // 分享标题
           desc: `年龄:${data.postDetail.age}, 家乡:${data.postDetail.city}, 职业:${data.postDetail.occupation}, 工作地点:${data.postDetail.workCity}, 择偶标准:${data.postDetail.standard}`, // 分享描述
-          link:
-            location.protocol +
-            '//www.geinigejuzichi.top/first/' +
-            (proxyId ? '?proxyId=' + proxyId : '') +
-            '#/detail/' +
-            route.params.postId, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          link: shareLink, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
           imgUrl: data.postDetail.imgs[0]
         })
       })
@@ -204,23 +202,30 @@ export default {
       }
     }
     const onPay = () => {
+      Loading.show()
       // 支付
       buyApi({
         postId: route.params.postId
-      }).then(({ data: resData }) => {
-        toolkit.wxPay({
-          timestamp: resData.timeStamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-          nonceStr: resData.nonceStr, // 支付签名随机串，不长于 32 位
-          package: 'prepay_id=' + resData.prepayId, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
-          signType: 'MD5', // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-          paySign: resData.paySign, // 支付签名
-          success: function() {
-            data.isShowPayModal = false
-            // 显示微信号
-            data.postDetail.hasBuy = true
-          }
-        })
       })
+        .then(({ data: resData }) => {
+          Loading.hide()
+          toolkit.wxPay({
+            timestamp: resData.timeStamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+            nonceStr: resData.nonceStr, // 支付签名随机串，不长于 32 位
+            package: 'prepay_id=' + resData.prepayId, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
+            signType: 'MD5', // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+            paySign: resData.paySign, // 支付签名
+            success: function() {
+              data.isShowPayModal = false
+              // 显示微信号
+              data.postDetail.hasBuy = true
+            }
+          })
+        })
+        .catch(() => {
+          Loading.hide()
+          Toast('唤起支付失败，请重试')
+        })
     }
 
     const mineCopySuccess = () => {

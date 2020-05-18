@@ -110,6 +110,7 @@
       <div class="top">
         <div class="area-type" @click="isShowType = true">{{ type.name }} <van-icon name="arrow-down" /></div>
         <div class="area-type" @click="isShowAreaPanel = true">{{ location.city }}<van-icon name="arrow-down" /></div>
+        <button @click="clear">clear</button>
       </div>
       <!-- <section class="tab-list">
         <div :class="['tab-item flex-box flex-center', tabSex === 2 ? 'choosed' : '']" @click="onChooseTab(2)">
@@ -206,6 +207,10 @@ export default {
       locationCode: ''
     })
 
+    const clear = () => {
+      window.localStorage.clear()
+    }
+
     const getPostList = () => {
       const sex = data.tabSex === 2 ? 'female' : 'male'
       data[sex].loading = true
@@ -229,10 +234,13 @@ export default {
           }
           // 女生列表有数据就选女生 否则选男生
           const shareItem = data['female'].postList[0] || data['male'].postList[0]
-          const proxyId = sessionStorage.getItem('firstProxyId')
+          const userInfo = JSON.parse(localStorage.getItem('firstUserInfo'))
+          const proxyId = userInfo.proxyId
+          const shareLink =
+            location.protocol + '//www.geinigejuzichi.top/first' + (proxyId ? '?proxyId=' + proxyId : '')
           toolkit.wxShare('onMenuShareTimeline', {
             title: '找一个三观相近的人结婚-寻一人终老', // 分享标题
-            link: location.protocol + '//www.geinigejuzichi.top/first' + (proxyId ? '?proxyId=' + proxyId : ''), // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            link: shareLink, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: shareItem && shareItem.imgs[0] // 分享图标
           })
           toolkit.wxShare('onMenuShareAppMessage', {
@@ -240,7 +248,7 @@ export default {
             desc:
               shareItem &&
               `年龄:${shareItem.age}, 家乡:${shareItem.city}, 职业:${shareItem.occupation}, 工作地点:${shareItem.workCity}, 择偶标准:${shareItem.standard}`, // 分享描述
-            link: location.protocol + '//www.geinigejuzichi.top/first' + (proxyId ? '?proxyId=' + proxyId : ''), // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            link: shareLink, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: shareItem && shareItem.imgs[0]
           })
         })
@@ -371,7 +379,8 @@ export default {
       toCreatePage,
       toMinPage,
       onShare,
-      filterLocation
+      filterLocation,
+      clear
     }
   }
 }
