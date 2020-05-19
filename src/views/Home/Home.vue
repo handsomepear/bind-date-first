@@ -237,7 +237,7 @@ export default {
           const userInfo = JSON.parse(localStorage.getItem('firstUserInfo'))
           const proxyId = userInfo.proxyId
           const shareLink =
-            location.protocol + '//www.geinigejuzichi.top/first' + (proxyId ? '?proxyId=' + proxyId : '')
+            location.protocol + '//www.geinigejuzichi.top/first/' + (proxyId ? '?proxyId=' + proxyId : '')
           toolkit.wxShare('onMenuShareTimeline', {
             title: '找一个三观相近的人结婚-寻一人终老', // 分享标题
             link: shareLink, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
