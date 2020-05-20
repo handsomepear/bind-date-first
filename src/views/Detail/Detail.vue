@@ -166,10 +166,9 @@ export default {
         }
         const shareLink =
           location.protocol +
-          '//www.geinigejuzichi.top/first/' +
-          (proxyId ? '?proxyId=' + proxyId : '') +
-          '#/detail/' +
-          route.params.postId
+          '//www.geinigejuzichi.top/first/detail/' +
+          route.params.postId +
+          (proxyId ? '?proxyId=' + proxyId : '')
         toolkit.wxShare('onMenuShareTimeline', {
           title: '找一个三观相近的人结婚-寻一人终老', // 分享标题
           link: shareLink, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
