@@ -110,7 +110,6 @@
       <div class="top">
         <div class="area-type" @click="isShowType = true">{{ type.name }} <van-icon name="arrow-down" /></div>
         <div class="area-type" @click="isShowAreaPanel = true">{{ location.city }}<van-icon name="arrow-down" /></div>
-        <button @click="clear">clear</button>
       </div>
       <!-- <section class="tab-list">
         <div :class="['tab-item flex-box flex-center', tabSex === 2 ? 'choosed' : '']" @click="onChooseTab(2)">
@@ -206,10 +205,6 @@ export default {
       ],
       locationCode: ''
     })
-
-    const clear = () => {
-      window.localStorage.clear()
-    }
 
     const getPostList = () => {
       const sex = data.tabSex === 2 ? 'female' : 'male'
@@ -379,8 +374,7 @@ export default {
       toCreatePage,
       toMinPage,
       onShare,
-      filterLocation,
-      clear
+      filterLocation
     }
   }
 }
